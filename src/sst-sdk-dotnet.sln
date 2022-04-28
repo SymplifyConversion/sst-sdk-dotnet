@@ -5,15 +5,19 @@ VisualStudioVersion = 16.0.30114.105
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Allocation", "Allocation\Allocation.csproj", "{8B923420-9E20-43C2-AFC4-D5053F128DB5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Allocation.Tests", "Allocation.Tests\Allocation.Tests.csproj", "{D0ABFFBD-EE38-49E3-8891-7C17ACF27853}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomHash", "CustomHash\CustomHash.csproj", "{C42C99E9-31E2-420B-B92D-1A5A33C6099B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomHashTest", "CustomHash.Tests\CustomHash.Tests.csproj", "{BFD7E41C-41F7-4B95-846C-8C0468F4ADC1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Allocation.Tests", "Allocation.Tests\Allocation.Tests.csproj", "{D0ABFFBD-EE38-49E3-8891-7C17ACF27853}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Visitor", "Visitor\Visitor.csproj", "{2FCEE5D5-BA7E-42B2-93FA-D6C1EC7E5283}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisitorTest", "Visitor.Tests\Visitor.Tests.csproj", "{1DC3525D-DFC2-4569-A0BA-105097F82933}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client", "Client\Client.csproj", "{2FCEE5D5-BA7E-42B2-93FA-D6C1EC7E5283}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientTest", "Client.Tests\Client.Tests.csproj", "{1DC3525D-DFC2-4569-A0BA-105097F82933}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

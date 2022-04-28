@@ -1,5 +1,4 @@
-﻿using System;
-using System.Net;
+﻿using System.Net;
 using Xunit;
 
 namespace Visitor.Tests
@@ -18,8 +17,10 @@ namespace Visitor.Tests
         [Fact]
         public void testSetCookieWithOtherCookiesInside()
         {
-            CookieCollection cookieCollection = new CookieCollection();
-            cookieCollection.Add(new Cookie("testName", "testValue"));
+            CookieCollection cookieCollection = new CookieCollection
+            {
+                new Cookie("testName", "testValue")
+            };
             string returnedID = Visitor.EnsureVisitorID(cookieCollection, "", () => "goober");
             Assert.Equal("goober", returnedID);
             Assert.Equal("goober", cookieCollection["sg_sst_vid"].Value);

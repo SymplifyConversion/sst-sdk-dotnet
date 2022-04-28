@@ -1,14 +1,14 @@
-﻿using System;
+using System;
 
 namespace Allocation.Exceptions
 {
-    public class AllocationException : Exception
+    public class ProjectException : Exception
     {
-        public AllocationException() { }
+        public ProjectException() { }
 
-        public AllocationException(string message) : base(message) { }
+        public ProjectException(string message) : base(message) { }
 
-        public class InvalidInputException : AllocationException
+        public class InvalidInputException : ProjectException
         {
             public InvalidInputException(string message)
                 : base(message)
@@ -16,7 +16,7 @@ namespace Allocation.Exceptions
             }
         }
 
-        public class NotFoundException : AllocationException
+        public class NotFoundException : ProjectException
         {
             public NotFoundException(string message)
                 : base(message)

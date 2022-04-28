@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json;
+using Allocation.Exceptions;
 
 namespace Allocation.Config
 {

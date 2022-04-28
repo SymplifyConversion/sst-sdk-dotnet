@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Allocation.Config;
+using Allocation.Exceptions;
 
 namespace Allocation
 {
@@ -40,10 +41,10 @@ namespace Allocation
             VariationConfig allocatedVariation = null;
             try
             {
-                foreach ((uint weight, int id) variationThreshold in variationThresholds)
+                foreach ((uint weight, int id) in variationThresholds)
                 {
-                    uint threshold = variationThreshold.weight;
-                    int variationID = variationThreshold.id;
+                    uint threshold = weight;
+                    int variationID = id;
 
                     if (allocation <= threshold)
                     {
