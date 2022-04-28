@@ -8,6 +8,8 @@ variables:
   project: "sst-sdk-dotnet"
 
 before_script:
+  - "pwd"
+  - "ls"
   - "cd $project/src/"
   - "dotnet restore"
 
