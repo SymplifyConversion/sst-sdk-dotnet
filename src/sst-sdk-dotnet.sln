@@ -11,6 +11,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomHashTest", "CustomHas
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Allocation.Tests", "Allocation.Tests\Allocation.Tests.csproj", "{D0ABFFBD-EE38-49E3-8891-7C17ACF27853}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Visitor", "Visitor\Visitor.csproj", "{2FCEE5D5-BA7E-42B2-93FA-D6C1EC7E5283}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisitorTest", "Visitor.Tests\Visitor.Tests.csproj", "{1DC3525D-DFC2-4569-A0BA-105097F82933}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
