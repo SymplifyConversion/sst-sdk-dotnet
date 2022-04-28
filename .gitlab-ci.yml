@@ -13,16 +13,10 @@ before_script:
 
 build:
   stage: build
-  variables:
-    build_path: "$project/src/"
   script:
-    - "cd $build_path"
     - "dotnet build"
 
 test:
   stage: test
-  variables:
-    test_path: "$project/src/"
   script:
-    - "cd $test_path"
     - "dotnet test"
