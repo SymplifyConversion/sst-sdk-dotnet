@@ -1,4 +1,4 @@
-using System.Text.Json;
+﻿using System.Text.Json;
 
 namespace Allocation.Config
 {
@@ -13,6 +13,12 @@ namespace Allocation.Config
         {
             WebsiteID = websiteID;
             CdnBaseURL = DEFAULT_CDN_BASEURL;
+        }
+
+        public ClientConfig(string websiteID, string cdnBaseURL)
+        {
+            WebsiteID = websiteID;
+            CdnBaseURL = cdnBaseURL;
         }
 
         public override string ToString() => JsonSerializer.Serialize(this);

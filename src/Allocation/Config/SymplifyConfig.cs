@@ -1,19 +1,33 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Allocation.Exceptions;
 
 namespace Allocation.Config
 {
     public class SymplifyConfig
     {
-        public int Updated { get; }
+        [JsonPropertyName("updated")]
+        public int Updated { get; set; }
+
+        [JsonPropertyName("projects")]
         public List<ProjectConfig> Projects { get; set; }
 
+        public SymplifyConfig() { }
         public SymplifyConfig(int updated, List<ProjectConfig> projects)
         {
             Updated = updated;
             Projects = projects;
         }
+
+        public SymplifyConfig(string json)
+        {
+            SymplifyConfig config = JsonSerializer.Deserialize<SymplifyConfig>(json.Trim());
+
+            Updated = config.Updated;
+            Projects = config.Projects;
+        }
+
 
         public ProjectConfig FindProjectWithName(string projectName)
         {
