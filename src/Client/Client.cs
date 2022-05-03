@@ -4,17 +4,20 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Allocation.Config;
+using Logger;
 
 namespace Client
 {
     public class Client
     {
         private string WebsiteID { get; set; }
-        public string CdnBaseURL { get; set; }
+        private string CdnBaseURL { get; set; }
 
-        public HttpClient HttpClient = new();
+        private HttpClient HttpClient = new();
 
-        public SymplifyConfig Config { get; set; }
+        private SymplifyConfig Config { get; set; }
+
+        private ILogger Logger { get; set; }
 
         public Client(ClientConfig clientConfig)
         {

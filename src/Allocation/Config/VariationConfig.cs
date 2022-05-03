@@ -14,11 +14,14 @@ namespace Allocation.Config
         [JsonPropertyName("weight")]
         public uint Weight { get; set; }
 
-        public VariationConfig(int id, string name, uint weight)
+        public string State { get; set; }
+
+        public VariationConfig(int id, string name, uint weight, string state)
         {
             ID = id;
             Name = name;
             Weight = weight;
+            State = state;
         }
 
         public override string ToString() => JsonSerializer.Serialize(this);

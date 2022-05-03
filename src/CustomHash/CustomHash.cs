@@ -11,7 +11,7 @@ namespace CustomHash
             double hash = Djb2Xor(key);
 
             // scale hash to the desired window
-            hash /= unsignedMax;                // scale to fit [0,1]
+            hash /= unsignedMax;
             return (int)Math.Ceiling(hash * window);
         }
 

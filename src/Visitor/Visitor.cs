@@ -7,7 +7,7 @@ namespace Visitor
     {
         const string CookieName = "sg_sst_vid";
 
-        public static string EnsureVisitorID(CookieCollection cookieCollection, string logger, Func<string> makeID = null)
+        public static string EnsureVisitorID(CookieCollection cookieCollection, Func<string> makeID = null)
         {
             Cookie visitorCookie = cookieCollection[CookieName];
             if (visitorCookie != null)

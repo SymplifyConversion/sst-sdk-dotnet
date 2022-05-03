@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Allocation.Exceptions;
@@ -22,10 +23,18 @@ namespace Allocation.Config
 
         public SymplifyConfig(string json)
         {
-            SymplifyConfig config = JsonSerializer.Deserialize<SymplifyConfig>(json.Trim());
+            try
+            {
+                char[] charsToTrim = { '\xEF', ' ', '\xBF', '\xBB' };
+                SymplifyConfig config = JsonSerializer.Deserialize<SymplifyConfig>(json.Trim(charsToTrim));
 
-            Updated = config.Updated;
-            Projects = config.Projects;
+                Updated = config.Updated;
+                Projects = config.Projects;
+            }
+            catch (Exception)
+            {
+                throw new Exception("Invalid json");
+            }
         }
 
 
