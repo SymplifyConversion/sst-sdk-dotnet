@@ -29,6 +29,8 @@ namespace SymplifySDK
                 throw new ArgumentException("malformed cdnBaseUrl, cannor create SDK client");
             }
 
+            Logger = clientConfig.Logger;
+
             Config = null;
         }
 
@@ -50,6 +52,7 @@ namespace SymplifySDK
 
             if (config == null)
             {
+                Logger.Log(LogLevel.ERROR, "config fetch failed");
                 return;
             }
 
@@ -63,6 +66,7 @@ namespace SymplifySDK
 
             if (WebResponse == null)
             {
+                Logger.Log(LogLevel.ERROR, "no config JSON to parse");
                 return null;
             }
 
@@ -78,6 +82,7 @@ namespace SymplifySDK
             }
             catch (Exception)
             {
+                Logger.Log(LogLevel.ERROR, "Could not downlaod the client");
                 return null;
             }
         }
@@ -91,6 +96,7 @@ namespace SymplifySDK
         {
             if (Config == null)
             {
+                Logger.Log(LogLevel.ERROR, "listProjects called before config is available");
                 return new List<string>();
             }
 
@@ -106,7 +112,9 @@ namespace SymplifySDK
 
         public string FindVariation(string projectName)
         {
-            if (Config == null) {
+            if (Config == null)
+            {
+                Logger.Log(LogLevel.ERROR, "findVariation called before config is available");
                 return null;
             }
 
@@ -114,6 +122,7 @@ namespace SymplifySDK
 
             if (project == null)
             {
+                Logger.Log(LogLevel.WARN, string.Format("project does not exist: {0}", projectName));
                 return null;
             }
 
