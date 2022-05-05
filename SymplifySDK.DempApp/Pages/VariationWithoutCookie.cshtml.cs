@@ -1,25 +1,20 @@
-﻿using System.Net;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using SymplifySDK.Allocation.Config;
 
 namespace SymplifySDK.DempApp.Pages
 {
-    public class IndexModel : PageModel
+    public class VariationWithoutCookie : PageModel
     {
         private readonly ILogger<IndexModel> _logger;
 
         public string websiteId = "5620148";
         public SymplifyClient Client;
-        public CookieCollection CookieCollection;
-        public string Variation;
 
-        public IndexModel(ILogger<IndexModel> logger)
+        public VariationWithoutCookie(ILogger<IndexModel> logger)
         {
             _logger = logger;
-            CookieCollection = new();
-            CookieCollection.Add(new Cookie("sg_sst_vid", "goober"));
         }
 
         public async Task OnGet()

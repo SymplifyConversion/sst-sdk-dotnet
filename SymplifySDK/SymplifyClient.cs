@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -110,8 +111,13 @@ namespace SymplifySDK
             return projectList;
         }
 
-        public string FindVariation(string projectName)
+        public string FindVariation(string projectName, CookieCollection cookieCollection)
         {
+            if (cookieCollection == null)
+            {
+                cookieCollection = new CookieCollection();
+            }
+
             if (Config == null)
             {
                 Logger.Log(LogLevel.ERROR, "findVariation called before config is available");
@@ -126,7 +132,7 @@ namespace SymplifySDK
                 return null;
             }
 
-            string visitorId = Visitor.EnsureVisitorID(new System.Net.CookieCollection());
+            string visitorId = Visitor.EnsureVisitorID(cookieCollection);
             VariationConfig variation = Allocation.Allocation.FindVariationForVisitor(project, visitorId);
 
             return variation.Name;

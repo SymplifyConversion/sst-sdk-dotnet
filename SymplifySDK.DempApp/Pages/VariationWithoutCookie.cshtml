@@ -1,7 +1,7 @@
 ﻿@page
-@model IndexModel
+@model VariationWithoutCookie
 @{
-    ViewData["Title"] = "Test with sending cookie";
+    ViewData["Title"] = "Variation withhout cookie";
 }
 <h1>@ViewData["Title"]</h1>
 
@@ -12,7 +12,7 @@
         <p>@projectName</p>
         <h1>Variation</h1>
         <p>
-            @Model.Client.FindVariation(projectName, Model.CookieCollection)
+            @Model.Client.FindVariation(projectName, null)
         </p>
     </div>
 }

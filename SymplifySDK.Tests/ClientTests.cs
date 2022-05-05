@@ -38,6 +38,5 @@ namespace SymplifySDK.Tests
 
             Assert.Equal("http://localhost:9000/42/sstConfig.json", client.GetConfigURL());
         }
-
     }
 }
