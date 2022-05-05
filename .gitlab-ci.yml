@@ -15,7 +15,15 @@ build:
   script:
     - "dotnet build"
 
-test:
+.test: &dotnet_test
   stage: test
   script:
     - "dotnet test"
+
+test:sdk:5: 
+  <<: *dotnet_test
+  image: mcr.microsoft.com/dotnet/sdk:5.0
+
+test:sdk:6:
+  <<: *dotnet_test
+  image: mcr.microsoft.com/dotnet/sdk:6.0

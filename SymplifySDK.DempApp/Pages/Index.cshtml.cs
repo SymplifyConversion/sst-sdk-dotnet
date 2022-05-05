@@ -28,6 +28,8 @@ namespace SymplifySDK.DempApp.Pages
             ClientConfig config = new(websiteId, cdnBaseURL);
             Client = new(config);
             await Client.LoadConfig();
+
+            // Check if we can get cookie from request instead.
         }
     }
 }

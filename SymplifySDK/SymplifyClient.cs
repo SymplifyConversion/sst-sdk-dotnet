@@ -33,6 +33,8 @@ namespace SymplifySDK
             Logger = clientConfig.Logger;
 
             Config = null;
+
+            // Add a time here to fetch configs
         }
 
         public static async Task<SymplifyClient> WithDefault(string websiteID, bool autoLoadConfig = true)
