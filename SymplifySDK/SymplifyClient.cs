@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Net.Http;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using SymplifySDK.Allocation.Config;
+using SymplifySDK.Cookies;
 
 namespace SymplifySDK
 {
@@ -19,7 +20,7 @@ namespace SymplifySDK
 
         private ILogger Logger { get; set; }
 
-        public SymplifyClient(ClientConfig clientConfig)
+        public SymplifyClient(ClientConfig clientConfig, int configUpdateInterval = 10)
         {
             CdnBaseURL = clientConfig.CdnBaseURL;
             WebsiteID = clientConfig.WebsiteID;
@@ -34,7 +35,20 @@ namespace SymplifySDK
 
             Config = null;
 
-            // Add a time here to fetch configs
+
+            if (configUpdateInterval < 1)
+            {
+                throw new Exception("configUpdateInterval < 1");
+            }
+
+            // Create a Timer object that knows to call our TimerCallback
+            // method once every configUpdateInterval * 1000 milliseconds.
+            _ = new Timer(TimerCallback, null, 0, configUpdateInterval * 1000);
+        }
+
+        private void TimerCallback(Object o)
+        {
+            _ = LoadConfig();
         }
 
         public static async Task<SymplifyClient> WithDefault(string websiteID, bool autoLoadConfig = true)
@@ -113,13 +127,8 @@ namespace SymplifySDK
             return projectList;
         }
 
-        public string FindVariation(string projectName, CookieCollection cookieCollection)
+        public string FindVariation(string projectName, string websiteID, ICookieJar cookieJar)
         {
-            if (cookieCollection == null)
-            {
-                cookieCollection = new CookieCollection();
-            }
-
             if (Config == null)
             {
                 Logger.Log(LogLevel.ERROR, "findVariation called before config is available");
@@ -134,8 +143,40 @@ namespace SymplifySDK
                 return null;
             }
 
-            string visitorId = Visitor.EnsureVisitorID(cookieCollection);
+            string visitorId = Visitor.EnsureVisitorID(cookieJar, websiteID);
             VariationConfig variation = Allocation.Allocation.FindVariationForVisitor(project, visitorId);
+
+            if (variation.State != VariationState.Active)
+            {
+                return null;
+            }
+
+            return variation.Name;
+        }
+
+        public string FindVariationWithGettersAndSetters(string projectName, string websiteID, Func<string, string> getCookie, Func<string, string, string> setCookie)
+        {
+            if (Config == null)
+            {
+                Logger.Log(LogLevel.ERROR, "findVariation called before config is available");
+                return null;
+            }
+
+            ProjectConfig project = Config.FindProjectWithName(projectName);
+
+            if (project == null)
+            {
+                Logger.Log(LogLevel.WARN, string.Format("project does not exist: {0}", projectName));
+                return null;
+            }
+
+            string visitorId = Visitor.EnsureVisitorIDWithGetAndSetCookies(getCookie, setCookie, websiteID);
+            VariationConfig variation = Allocation.Allocation.FindVariationForVisitor(project, visitorId);
+
+            if (variation.State != VariationState.Active)
+            {
+                return null;
+            }
 
             return variation.Name;
         }

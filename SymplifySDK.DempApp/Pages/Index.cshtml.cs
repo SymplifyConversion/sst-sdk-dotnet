@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using SymplifySDK.Allocation.Config;
+using SymplifySDK.Cookies;
 
 namespace SymplifySDK.DempApp.Pages
 {
@@ -10,16 +11,14 @@ namespace SymplifySDK.DempApp.Pages
     {
         private readonly ILogger<IndexModel> _logger;
 
-        public string websiteId = "5620148";
+        public string websiteId = "5620187";
         public SymplifyClient Client;
-        public CookieCollection CookieCollection;
+        public ICookieJar CookieJar;
         public string Variation;
 
         public IndexModel(ILogger<IndexModel> logger)
         {
             _logger = logger;
-            CookieCollection = new();
-            CookieCollection.Add(new Cookie("sg_sst_vid", "goober"));
         }
 
         public async Task OnGet()
@@ -28,8 +27,17 @@ namespace SymplifySDK.DempApp.Pages
             ClientConfig config = new(websiteId, cdnBaseURL);
             Client = new(config);
             await Client.LoadConfig();
+        }
 
-            // Check if we can get cookie from request instead.
+        public string Get(string key)
+        {
+            return Request.Cookies[key];
+        }
+
+        public string Set(string key, string value)
+        {
+            Response.Cookies.Append(key, value);
+            return "";
         }
     }
 }

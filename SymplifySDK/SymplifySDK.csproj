@@ -6,8 +6,10 @@
 
   <ItemGroup>
     <None Remove="Allocation\" />
+    <None Remove="Cookies\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Allocation\" />
+    <Folder Include="Cookies\" />
   </ItemGroup>
 </Project>

@@ -15,6 +15,7 @@ namespace SymplifySDK.DempApp
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
+                    webBuilder.UseUrls("http://*:61264");
                 });
     }
 }

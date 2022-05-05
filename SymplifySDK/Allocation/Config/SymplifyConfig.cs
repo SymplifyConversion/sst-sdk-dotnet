@@ -31,7 +31,7 @@ namespace SymplifySDK.Allocation.Config
                 Updated = config.Updated;
                 Projects = config.Projects;
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 throw new Exception("Invalid json");
             }

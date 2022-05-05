@@ -3,6 +3,11 @@ using System.Text.Json.Serialization;
 
 namespace SymplifySDK.Allocation.Config
 {
+    public static class VariationState
+    {
+        public static readonly string Active = "active";
+        public static readonly string Paused = "paused";
+    }
     public class VariationConfig
     {
         [JsonPropertyName("id")]
@@ -14,6 +19,7 @@ namespace SymplifySDK.Allocation.Config
         [JsonPropertyName("weight")]
         public uint Weight { get; set; }
 
+        [JsonPropertyName("state")]
         public string State { get; set; }
 
         public VariationConfig(int id, string name, uint weight, string state)
