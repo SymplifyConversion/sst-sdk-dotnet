@@ -154,33 +154,6 @@ namespace SymplifySDK
             return variation.Name;
         }
 
-        public string FindVariationWithGettersAndSetters(string projectName, string websiteID, Func<string, string> getCookie, Func<string, string, string> setCookie)
-        {
-            if (Config == null)
-            {
-                Logger.Log(LogLevel.ERROR, "findVariation called before config is available");
-                return null;
-            }
-
-            ProjectConfig project = Config.FindProjectWithName(projectName);
-
-            if (project == null)
-            {
-                Logger.Log(LogLevel.WARN, string.Format("project does not exist: {0}", projectName));
-                return null;
-            }
-
-            string visitorId = Visitor.EnsureVisitorIDWithGetAndSetCookies(getCookie, setCookie, websiteID);
-            VariationConfig variation = Allocation.Allocation.FindVariationForVisitor(project, visitorId);
-
-            if (variation.State != VariationState.Active)
-            {
-                return null;
-            }
-
-            return variation.Name;
-        }
-
         public override string ToString() => JsonSerializer.Serialize(this);
     }
 
