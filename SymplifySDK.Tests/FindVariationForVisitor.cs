@@ -16,12 +16,12 @@ namespace SymplifySDK.Tests
                         {
                             ""id"": 42,
                             ""name"": ""original"",
-                            ""weight"": 2
+                            ""weight"": 67
                         },
                         {
                             ""id"": 1337,
                             ""name"": ""massive"",
-                            ""weight"": 1
+                            ""weight"":33
                         }
                     ]
                 },
@@ -102,27 +102,27 @@ namespace SymplifySDK.Tests
         [Theory]
         [InlineData("foobar", 42)]
         [InlineData("Fabian", 1337)]
-        [InlineData("", 42)]
+        [InlineData("", null)]
         [InlineData("Alexander", 42)]
         [InlineData("1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890", 1337)]
-        public void TestAllocateIsWeighted(string str, int expected)
+        public void TestAllocateIsWeighted(string str, int? expected)
         {
             var variation = Allocation.Allocation.FindVariationForVisitor(projectConfig, str);
 
-            Assert.Equal(expected, variation.ID);
+            Assert.Equal(expected, variation?.ID);
         }
 
         [Theory]
         [InlineData("foobar", 1)]
         [InlineData("Fabian", 7)]
-        [InlineData("", 0)]
+        [InlineData("", null)]
         [InlineData("Alexander", 5)]
         [InlineData("1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890", 10)]
-        public void TestAllocateWithManyVariations(string str, int expected)
+        public void TestAllocateWithManyVariations(string str, int? expected)
         {
             var variation = Allocation.Allocation.FindVariationForVisitor(projectConfigWithManyVariations, str);
 
-            Assert.Equal(expected, variation.ID);
+            Assert.Equal(expected, variation?.ID);
         }
     }
 }

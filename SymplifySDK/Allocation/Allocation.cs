@@ -9,6 +9,10 @@ namespace SymplifySDK.Allocation
     {
         public static VariationConfig FindVariationForVisitor(ProjectConfig project, string visitorId)
         {
+            if (null == visitorId || "" == visitorId) {
+                return null;
+            }
+
             int allocation = GetAllocation(project, visitorId);
 
             return LookupVariationAt(project, allocation);
