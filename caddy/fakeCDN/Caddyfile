@@ -1,0 +1,9 @@
+{
+    admin off
+    http_port  5080
+    https_port 5443
+}
+
+fake-cdn.localhost.test
+tls internal
+file_server browse

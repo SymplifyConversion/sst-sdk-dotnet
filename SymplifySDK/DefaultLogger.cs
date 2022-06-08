@@ -6,7 +6,7 @@ namespace SymplifySDK
     {
         public void Log(LogLevel level, string message)
         {
-            string line = $"[{level}] : {message}";
+            string line = $"[SSTSDK {level}] : {message}";
             Debug.WriteLine(line);
         }
     }

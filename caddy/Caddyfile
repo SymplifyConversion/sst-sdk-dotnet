@@ -1,0 +1,5 @@
+symplify-demoapp.localhost.test
+
+tls internal
+
+reverse_proxy 127.0.0.1:61265
