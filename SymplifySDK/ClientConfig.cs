@@ -1,7 +1,10 @@
 ﻿using System.Text.Json;
 
-namespace SymplifySDK.Allocation.Config
+namespace SymplifySDK
 {
+    /// <summary>
+    /// Class <c>ClientConfig</c> stores the websiteID, CdnBaseUrl and logger information used by the <c>SymplifyClient</c> 
+    /// </summary>
     public class ClientConfig
     {
         readonly string DEFAULT_CDN_BASEURL = "https://cdn-sitegainer.com";

@@ -1,0 +1,30 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Symplify server side testing";
+}
+<h1>@ViewData["Title"]</h1>
+
+@if(Model.client.ListProjects().Count == 0) {
+    <p>There are currently no active projects for website @Model.client.WebsiteID</p>
+}
+
+@foreach (string projectName in Model.client.ListProjects())
+{
+    <div>
+        <h3>Project Name</h3>
+        <p>@projectName</p>
+        <h4>Variation</h4>
+        <p>
+            @{string variation = Model.client.FindVariation(projectName, Model);
+                if (@variation != null)
+                {
+                    <p>@variation</p>
+                } else
+                {
+                    <p>Variation is NULL (can be outside of variation bound or inactive variation)</p>
+                }
+            }
+        </p>
+    </div>
+}

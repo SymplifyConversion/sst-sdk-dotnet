@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
-namespace SymplifySDK.DempApp
+namespace SymplifySDK.DemoApp
 {
     public class Program
     {
@@ -15,7 +15,7 @@ namespace SymplifySDK.DempApp
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
-                    webBuilder.UseUrls("http://*:61264");
+                    webBuilder.UseUrls("http://*:61265");
                 });
     }
 }

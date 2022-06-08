@@ -1,11 +1,14 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+using System.Diagnostics;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using SymplifySDK.DemoApp.Services;
 
-namespace SymplifySDK.DempApp
+namespace SymplifySDK.DemoApp
 {
     public class Startup
     {
@@ -19,13 +22,15 @@ namespace SymplifySDK.DempApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            Trace.Listeners.Add(new TextWriterTraceListener(Console.Out));
             services.AddRazorPages();
+            services.AddSingleton(typeof(ISymplifyService), typeof(SymplifyService));
+            services.AddHostedService<SymplifyService>();
             services.Configure<ForwardedHeadersOptions>(options =>
             {
                 options.ForwardedHeaders =
                     ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
             });
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

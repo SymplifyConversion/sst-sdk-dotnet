@@ -8,6 +8,7 @@ namespace SymplifySDK.Tests
 {
     public class EnsureVisitorID
     {
+        // TODO: Change to correct cookie name
         const string COOKIE_NAME = "sg_sst_vid";
 
         [Fact]
