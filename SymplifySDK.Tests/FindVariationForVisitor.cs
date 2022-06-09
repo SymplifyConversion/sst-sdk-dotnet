@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using SymplifySDK.Allocation.Config;
 using Xunit;
 
@@ -12,15 +12,18 @@ namespace SymplifySDK.Tests
                 {
                     ""id"": 4711,
                     ""name"":""discount"",
+                    ""state"": ""active"",
                     ""variations"": [
                         {
                             ""id"": 42,
                             ""name"": ""original"",
+                            ""state"": ""active"",
                             ""weight"": 67
                         },
                         {
                             ""id"": 1337,
                             ""name"": ""massive"",
+                            ""state"": ""active"",
                             ""weight"":33
                         }
                     ]
@@ -28,60 +31,66 @@ namespace SymplifySDK.Tests
                 {
                     ""id"": 1337,
                     ""name"":""manyVariations"",
+                    ""state"": ""active"",
                     ""variations"": [
-                        {
-                            ""id"": 0,
-                            ""name"": ""original"",
-                            ""weight"": 10
-                        },
                         {
                             ""id"": 1,
                             ""name"": ""variation1"",
+                            ""state"": ""active"",
                             ""weight"": 10
                         },
                         {
                             ""id"": 2,
                             ""name"": ""variation2"",
+                            ""state"": ""active"",
                             ""weight"": 10
                         },
                         {
                             ""id"": 3,
                             ""name"": ""variation3"",
+                            ""state"": ""active"",
                             ""weight"": 10
                         },
                         {
                             ""id"": 4,
                             ""name"": ""variation4"",
+                            ""state"": ""active"",
                             ""weight"": 10
                         },
                         {
                             ""id"": 5,
                             ""name"": ""variation5"",
+                            ""state"": ""active"",
                             ""weight"": 10
                         },
                         {
                             ""id"": 6,
                             ""name"": ""variation6"",
+                            ""state"": ""active"",
                             ""weight"": 10
                         },
                         {
                             ""id"": 7,
                             ""name"": ""variation7"",
+                            ""state"": ""active"",
                             ""weight"": 10
                         },
                         {
                             ""id"": 8,
                             ""name"": ""variation8"",
+                            ""state"": ""active"",
                             ""weight"": 10
                         },
                         {
                             ""id"": 9,
                             ""name"": ""variation9"",
+                            ""state"": ""active"",
                             ""weight"": 10
                         },
                         {
                             ""id"": 10,
                             ""name"": ""variation10"",
+                            ""state"": ""active"",
                             ""weight"": 10
                         }
                     ]
@@ -113,7 +122,7 @@ namespace SymplifySDK.Tests
         }
 
         [Theory]
-        [InlineData("foobar", 1)]
+        [InlineData("foobar", 2)]
         [InlineData("Fabian", 7)]
         [InlineData("", null)]
         [InlineData("Alexander", 5)]

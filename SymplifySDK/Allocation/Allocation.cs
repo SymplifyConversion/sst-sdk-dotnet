@@ -1,7 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using SymplifySDK.Allocation.Config;
-using SymplifySDK.Allocation.Exceptions;
 
 namespace SymplifySDK.Allocation
 {
@@ -15,18 +14,19 @@ namespace SymplifySDK.Allocation
 
             int allocation = GetAllocation(project, visitorId);
 
-            return LookupVariationAt(project, allocation);
+            var variation = LookupVariationAt(project, allocation);
+
+            if (variation?.State != ProjectState.Active) {
+                return null;
+            }
+
+            return variation;
         }
 
         private static int GetAllocation(ProjectConfig project, string visitorId)
         {
             string hashKey = string.Format("{0}:{1}", visitorId, project.ID);
-            uint totalWeight = 0;
-
-            foreach (VariationConfig variation in project.Variations)
-            {
-                totalWeight += variation.Weight;
-            }
+            uint totalWeight = 100;
 
             return CustomHash.HashInWindow(hashKey, totalWeight);
         }
@@ -43,23 +43,15 @@ namespace SymplifySDK.Allocation
             }
 
             VariationConfig allocatedVariation = null;
-            try
+            foreach ((uint weight, int id) in variationThresholds)
             {
-                foreach ((uint weight, int id) in variationThresholds)
+                uint threshold = weight;
+                int variationID = id;
+                if (allocation <= threshold)
                 {
-                    uint threshold = weight;
-                    int variationID = id;
-
-                    if (allocation <= threshold)
-                    {
-                        allocatedVariation = project.FindVariationWithId(variationID);
-                        break;
-                    }
+                    allocatedVariation = project.FindVariationWithId(variationID);
+                    break;
                 }
-            }
-            catch (AllocationException.NotFoundException)
-            {
-                throw new Exception("[SSTSDK] cannot allocate variation with $allocation in $totalWeight");
             }
 
             return allocatedVariation;
