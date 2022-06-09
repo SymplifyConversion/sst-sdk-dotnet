@@ -172,15 +172,15 @@ namespace SymplifySDK
                 return null;
             }
 
-            string visitorId = Visitor.EnsureVisitorID(cookieJar, WebsiteID);
-            VariationConfig variation = Allocation.Allocation.FindVariationForVisitor(project, visitorId);
-
-            if (variation.State != VariationState.Active)
+            if (project.State != ProjectState.Active)
             {
                 return null;
             }
 
-            return variation.Name;
+            string visitorId = Visitor.EnsureVisitorID(cookieJar, WebsiteID);
+            VariationConfig variation = Allocation.Allocation.FindVariationForVisitor(project, visitorId);
+
+            return variation?.Name;
         }
 
         public override string ToString() => JsonSerializer.Serialize(this);

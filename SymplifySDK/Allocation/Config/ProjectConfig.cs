@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using SymplifySDK.Allocation.Exceptions;
 
 namespace SymplifySDK.Allocation.Config
 {
@@ -11,6 +10,8 @@ namespace SymplifySDK.Allocation.Config
         public int ID { get; }
         [JsonPropertyName("name")]
         public string Name { get; set; }
+        [JsonPropertyName("state")]
+        public ProjectState State { get; set; }
 
         [JsonPropertyName("variations")]
         public List<VariationConfig> Variations { get; set; }
@@ -32,8 +33,7 @@ namespace SymplifySDK.Allocation.Config
                 }
             }
 
-            // TODO Add better message
-            throw new AllocationException.NotFoundException("Allocation not found");
+            return null;
         }
 
         public override string ToString() => JsonSerializer.Serialize(this);

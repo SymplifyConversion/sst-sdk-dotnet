@@ -22,4 +22,10 @@
   <ItemGroup>
     <ProjectReference Include="..\SymplifySDK\SymplifySDK.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Include="data\sdk_config.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="data\sdk_config_privacy2.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="data\test_cases.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
 </Project>
