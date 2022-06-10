@@ -22,6 +22,7 @@ build:
 test:sdk:5: 
   allow_failure: true # not quite working yet
   <<: *dotnet_test
+  image: mcr.microsoft.com/dotnet/sdk:5.0
   variables:
     SDK_VERSION: "5.0"
 
