@@ -17,6 +17,7 @@ build:
 .test: &dotnet_test
   stage: test
   script:
+    - echo running "dotnet test --framework net$SDK_VERSION" 
     - "dotnet test --framework net$SDK_VERSION"
 
 test:sdk:5: 
