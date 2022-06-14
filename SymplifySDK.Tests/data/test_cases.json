@@ -10,7 +10,6 @@
     }
   },
   {
-    "skip": "not yet implemented",
     "test_name": "no cookie generates ID, allocates any variation",
     "sdk_config": "sdk_config.json",
     "website_id": "10001",
@@ -96,13 +95,12 @@
     "test_project_name": "test project",
     "expect_variation_match": "active variation 2",
     "expect_sg_cookie_properties_match": {
-      "10001/1001_ch": "1",
-      "10001/1001": "[10013]",
-      "10001/aud_p": "[1001]"
+      "10001/1001_ch": 1,
+      "10001/1001": [10013],
+      "10001/aud_p": [1001]
     }
   },
   {
-    "skip": "not yet implemented",
     "test_name": "reuse previous allocation after config change",
     "sdk_config": "sdk_config.json",
     "website_id": "10001",
@@ -120,7 +118,7 @@
     "test_project_name": "no allocations",
     "expect_variation_match": null,
     "expect_sg_cookie_properties_match": {
-      "10001/1003_ch": "-1"
+      "10001/1003_ch": -1
     }
   },
   {
@@ -128,7 +126,7 @@
     "sdk_config": "sdk_config.json",
     "website_id": "10001",
     "cookies": {
-      "sg_cookies": "{%2210001%22:{%221001_ch%22:-1%2C%22visid%22:%22goober%22}%2C%22_g%22:1}"
+      "sg_cookies": "{%2210001%22:{%221001_ch%22:-1%2C%22visid%22:%22foobar%22}%2C%22_g%22:1}"
     },
     "test_project_name": "test project",
     "expect_variation_match": null,
@@ -146,6 +144,7 @@
     "expect_sg_cookie_properties_match": {}
   },
   {
+    "skip": "not yet implemented",
     "test_name": "bail out if privacy mode 2 and no opt-in",
     "sdk_config": "sdk_config_privacy2.json",
     "website_id": "10001",
@@ -156,6 +155,7 @@
     }
   },
   {
+    "skip": "not yet implemented",
     "test_name": "no bail out if privacy mode 2 but opt-in set",
     "sdk_config": "sdk_config_privacy2.json",
     "website_id": "10001",
@@ -166,9 +166,9 @@
     "test_project_name": "test project",
     "expect_variation_match": "active variation 2",
     "expect_sg_cookie_properties_match": {
-      "10001/1001_ch": "1",
-      "10001/1001": "[10013]",
-      "10001/aud_p": "[1001]"
+      "10001/1001_ch": 1,
+      "10001/1001": [10013],
+      "10001/aud_p": [1001]
     }
   }
 ]

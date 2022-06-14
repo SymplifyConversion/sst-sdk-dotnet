@@ -190,7 +190,7 @@ namespace SymplifySDK.Tests
         [Fact]
         public void TestCannotBeCreatedWithFloatWeights()
         {
-            Assert.Throws<Exception>(() => new SymplifyConfig(CONFIG_JSON_WITH_FLOAT_WEIGHTS));
+            Assert.Throws<ArgumentException>(() => new SymplifyConfig(CONFIG_JSON_WITH_FLOAT_WEIGHTS));
         }
 
         [Fact]
@@ -206,7 +206,7 @@ namespace SymplifySDK.Tests
         [Fact]
         public void TestCannotBeCreatedFromInvalidJSON()
         {
-            Assert.Throws<Exception>(() => new SymplifyConfig("invalid"));
+            Assert.Throws<ArgumentException>(() => new SymplifyConfig("invalid"));
         }
 
         [Fact]
