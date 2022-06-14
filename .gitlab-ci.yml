@@ -20,13 +20,6 @@ build:
     - echo running "dotnet test --framework net$SDK_VERSION" 
     - "dotnet test --framework net$SDK_VERSION"
 
-test:sdk:5: 
-  allow_failure: true # not quite working yet
-  <<: *dotnet_test
-  image: mcr.microsoft.com/dotnet/sdk:5.0
-  variables:
-    SDK_VERSION: "5.0"
-
 test:sdk:6:
   <<: *dotnet_test
   variables:

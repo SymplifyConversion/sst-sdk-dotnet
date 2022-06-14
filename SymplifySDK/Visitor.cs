@@ -1,48 +1,31 @@
 using System;
-using System.Text.Json;
-using System.Web;
 using SymplifySDK.Cookies;
 
 namespace SymplifySDK
 {
     public class Visitor
     {
-        // TODO: Change to correct cookie name
-        const string COOKIE_NAME = "sg_sst_vid";
         const int SUPPORTED_COOKIE_VERSION = 1;
 
-
-        public static string EnsureVisitorID(ICookieJar cookieJar, string websiteId, Func<string> makeID = null)
+        /// <summary> 
+        /// Get the current visitor id for this website in <paramref name="cookies"/>.
+        /// If none exists, generate it, set it in the website cookie, and return it.
+        /// </summary>
+        /// <param name="cookies">The SymplifyCookie housing visitor info</param>
+        /// <param name="websiteID">The ID of the current website</param>
+        /// <param name="makeID">An optional ID generation override, used for testing</param>
+        public static string EnsureVisitorID(SymplifyCookie cookies, string websiteID, Func<string> makeID = null)
         {
-            string visitorCookie = cookieJar.GetCookie(COOKIE_NAME);
+            var currID = cookies.GetVisitorID(websiteID);
 
-            SymplifyCookie simpCookie;
-            if (visitorCookie != null)
+            if (currID == null || currID == "")
             {
-                simpCookie = JsonSerializer.Deserialize<SymplifyCookie>(HttpUtility.UrlDecode(visitorCookie));
-            }
-            else
-            {
-                simpCookie = new();
-                simpCookie.CookieVersionKey = SUPPORTED_COOKIE_VERSION;
+                string visitorID = makeID != null ? makeID() : uuidGenerator();
+                currID = visitorID;
+                cookies.SetVisitorID(websiteID, currID);
             }
 
-            if (simpCookie.CookieVersionKey != SUPPORTED_COOKIE_VERSION)
-            {
-                return null;
-            }
-
-            if (simpCookie.WebsiteId != null)
-            {
-                return simpCookie.WebsiteId;
-            }
-
-            string visitorID = makeID != null ? makeID() : uuidGenerator();
-            simpCookie.WebsiteId = visitorID;
-
-            cookieJar.SetCookie(COOKIE_NAME, HttpUtility.UrlEncode(JsonSerializer.Serialize(simpCookie, new JsonSerializerOptions { WriteIndented = true })));
-
-            return visitorID;
+            return currID;
         }
 
         private static string uuidGenerator()

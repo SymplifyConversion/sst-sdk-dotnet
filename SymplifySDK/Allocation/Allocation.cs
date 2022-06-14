@@ -34,7 +34,7 @@ namespace SymplifySDK.Allocation
         private static VariationConfig LookupVariationAt(ProjectConfig project, int allocation)
         {
             uint totalWeight = 0;
-            List<(uint weight, int id)> variationThresholds = new();
+            List<(uint weight, long id)> variationThresholds = new();
 
             foreach (VariationConfig variationConfig in project.Variations)
             {
@@ -43,10 +43,10 @@ namespace SymplifySDK.Allocation
             }
 
             VariationConfig allocatedVariation = null;
-            foreach ((uint weight, int id) in variationThresholds)
+            foreach ((uint weight, long id) in variationThresholds)
             {
                 uint threshold = weight;
-                int variationID = id;
+                long variationID = id;
                 if (allocation <= threshold)
                 {
                     allocatedVariation = project.FindVariationWithId(variationID);

@@ -1,80 +1,155 @@
 using Xunit;
+using Xunit.Abstractions;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Text.Json;
-using System.Web;
+using Newtonsoft.Json.Linq;
+using RichardSzalay.MockHttp;
 
-using SymplifySDK.Allocation;
-using SymplifySDK.Allocation.Config;
+using SymplifySDK.Cookies;
 
 namespace SymplifySDK.Tests
 {
-    public class CompatibilityTestCase {
-        public string skip { get; set; }
-        public string test_name { get; set; }
-        public string sdk_config { get; set; }
-        public string website_id { get; set; }
-        public string test_project_name { get; set; }
-        public string expect_variation_match { get; set; }
-        public Dictionary<string, string> cookies { get; set; }
-        public Dictionary<string, string> expect_sg_cookie_properties_match { get; set; }
+    public class CompatibilityTestCase
+    {
+        public string Skip { get; set; }
+        public string TestName { get; set; }
+        public string SDKConfig { get; set; }
+        public string WebsiteID { get; set; }
+        public string TestProjectName { get; set; }
+        public string ExpectVariationMatch { get; set; }
+        public Dictionary<string, string> Cookies { get; set; }
+        public JObject ExpectSgCookiePropertiesMatch { get; set; }
 
-        override public string ToString() {
-            return test_name;
+        override public string ToString()
+        {
+            return TestName;
         }
     }
 
     public class CompatibilityTest
     {
 
+        readonly ITestOutputHelper output;
+
+        public CompatibilityTest(ITestOutputHelper output)
+        {
+            this.output = output;
+        }
+
+        HttpClient fakeHttpClient(string responseBody = "{}", string contentType = "application/json")
+        {
+            var mockHttp = new MockHttpMessageHandler();
+            mockHttp.When("*").Respond(contentType, responseBody);
+
+            return mockHttp.ToHttpClient();
+        }
+
         public static IEnumerable<object[]> CompatibilityTestData()
         {
             var filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "data", "test_cases.json");
             var json = File.ReadAllText(filePath);
-            var testCases = JsonSerializer.Deserialize<List<CompatibilityTestCase>>(json);
+
+            var testCases = JArray.Parse(json).Select(c => new CompatibilityTestCase
+            {
+                Skip = (string)c["skip"],
+                TestName = (string)c["test_name"],
+                SDKConfig = (string)c["sdk_config"],
+                WebsiteID = (string)c["website_id"],
+                TestProjectName = (string)c["test_project_name"],
+                ExpectVariationMatch = (string)c["expect_variation_match"],
+                Cookies = c["cookies"]?.ToObject<Dictionary<string, string>>(),
+                ExpectSgCookiePropertiesMatch = c["expect_sg_cookie_properties_match"]?.ToObject<JObject>(),
+            }).ToList();
+
             foreach (var test in testCases)
             {
                 yield return new[] { test };
             }
         }
 
-        public static SymplifyConfig ReadConfig(string filename)
+        static string ReadConfig(string filename)
         {
             var filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "data", filename);
             var json = File.ReadAllText(filePath);
-            return new SymplifyConfig(json);
+            return json;
+        }
+
+        static void AssertMatchOrBothNull(string expected, string actual)
+        {
+            if (expected != null)
+            {
+                Assert.Matches(expected, actual);
+            }
+            else
+            {
+                Assert.Equal(expected, actual);
+            }
         }
 
         [Theory]
         [MemberData(nameof(CompatibilityTestData))]
-        public void SDKIsCompatible(CompatibilityTestCase test)
+        async public void SDKIsCompatible(CompatibilityTestCase test)
         {
             // HACK but we need xunit v3 before we can skip tests dynamically.
-            if (test.skip != null) {
-                Assert.Equal(test.skip, test.skip);
+            if (test.Skip != null)
+            {
+                Assert.Equal(test.Skip, test.Skip);
                 return;
             }
 
-            var sdkConfig = ReadConfig(test.sdk_config);
-            var projConfig = sdkConfig.FindProjectWithName(test.test_project_name);
-            var sg_cookiesJSON = HttpUtility.UrlDecode(test?.cookies?["sg_cookies"] ?? "{}");
-            var sg_cookies = JsonDocument.Parse(sg_cookiesJSON).RootElement;
+            // prepare the client data
+            var sdkConfig = ReadConfig(test.SDKConfig);
+            ClientConfig cfg = new ClientConfig(test.WebsiteID, "https://cdn.example.com");
+            SymplifyClient client = new SymplifyClient(cfg, fakeHttpClient(sdkConfig), new DefaultLogger());
+            await client.LoadConfig();
 
-            JsonElement websiteData;
-            JsonElement visid;
-            string visitorID = "";
-
-            if (sg_cookies.TryGetProperty(test.website_id, out websiteData)) {
-                if (websiteData.TryGetProperty("visid", out visid)) {
-                    visitorID = visid.GetString();
-                }
+            // prepare the per request data
+            CookieJar cookieJar = new();
+            foreach (var cookie in test?.Cookies ?? new())
+            {
+                cookieJar.SetCookie(cookie.Key, cookie.Value);
             }
 
-            var variation = Allocation.Allocation.FindVariationForVisitor(projConfig, visitorID);
+            // simulate the request
+            var variation = client.FindVariation(test.TestProjectName, cookieJar);
 
-            Assert.Equal(test.expect_variation_match, variation?.Name);
+            // verify the allocated variation
+            AssertMatchOrBothNull(test.ExpectVariationMatch, variation);
+
+            // verify cookie afterwards
+            foreach (var expect in test?.ExpectSgCookiePropertiesMatch?.Properties())
+            {
+                // get the root object first
+                var node = JObject.Parse(WebUtility.UrlDecode(cookieJar.GetCookie(SymplifyCookie.COOKIE_NAME) ?? "{}")).Root;
+                foreach (var part in expect.Name.Split('/'))
+                {
+                    // traverse to an expected leaf
+                    if (node is not JObject)
+                    {
+                        break;
+                    }
+                    node = node[part];
+                }
+
+                // verify the expected leaf value
+                if (expect.Value.Type == JTokenType.String)
+                {
+                    AssertMatchOrBothNull((string)expect.Value, (string)node);
+                }
+                else if (expect.Value.Type == JTokenType.Null)
+                {
+                    Assert.Null(node);
+                }
+                else
+                {
+                    Assert.Equal(expect.Value, node);
+                }
+            }
         }
     }
 }

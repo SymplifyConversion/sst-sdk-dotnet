@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using SymplifySDK.Allocation.Config;
+using System.Net.Http;
 using Xunit;
 
 namespace SymplifySDK.Tests
@@ -11,8 +11,8 @@ namespace SymplifySDK.Tests
         public void testErrorLog()
         {
             LogSpy logSpy = new();
-            ClientConfig cfg = new("4711", "https://localhost:10000", logSpy);
-            SymplifyClient sdk = new(cfg);
+            ClientConfig cfg = new("4711", "https://localhost:10000");
+            SymplifyClient sdk = new(cfg, new HttpClient(), logSpy);
             List<string> projects = sdk.ListProjects();
 
             Assert.Empty(projects);

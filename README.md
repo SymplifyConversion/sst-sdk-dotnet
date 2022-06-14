@@ -2,12 +2,12 @@
 
 This is the C# implementation of the Symplify Server-Side Testing SDK.
 
-It is a cross platform .NET Core library, to enable integration regardlesss of
-framework used for building applications.
+It is a cross platform .NET Core library, to enable integration regardless of
+e.g. web frameworks used for building applications.
 
 ## Requirements
 
-- [.NET] 5 or later
+- [.NET] 6
 
 [.NET]: https://dotnet.microsoft.com/en-us/download
 
@@ -65,8 +65,7 @@ your [hosts file], for 127.0.0.1.
 
 The project `SymplifySDK.DemoApp` is a ASP.NET Core application with Razor
 pages. It just shows an HTML page listing all the configured projects.
-To Run the application:  
-`dotnet run [--framework net5.0 | --framework net6.0] --project SymplifySDK.DemoApp`.
+To Run the application: `dotnet run --project SymplifySDK.DemoApp`.
 
 You can now browse the site at http://127.0.0.1:61265. There is a Caddyfile in
 [caddy](caddy) you can use if you want to browse

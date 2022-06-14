@@ -23,14 +23,14 @@ namespace SymplifySDK
         private int configUpdateIntervalMillis = 10000;
         private Timer _timer;
 
-        private HttpClient HttpClient = new();
+        private HttpClient HttpClient;
 
         public SymplifyConfig Config { get; set; }
 
         // TODO We should be able to use Microsoft.Extensions.Logging, it works on .NET Core
         private ILogger Logger { get; set; }
 
-        public SymplifyClient(ClientConfig clientConfig, int configUpdateInterval = 10)
+        public SymplifyClient(ClientConfig clientConfig, HttpClient httpClient, ILogger logger, int configUpdateInterval = 10)
         {
             CdnBaseURL = clientConfig.CdnBaseURL;
             WebsiteID = clientConfig.WebsiteID;
@@ -41,13 +41,15 @@ namespace SymplifySDK
                 throw new ArgumentException("malformed CDN base URL, cannot create SDK client");
             }
 
-            Logger = clientConfig.Logger;
+            HttpClient = httpClient;
+
+            Logger = logger;
 
             Config = null;
 
             if (configUpdateInterval < 1)
             {
-                throw new Exception("configUpdateInterval < 1");
+                throw new ArgumentException("configUpdateInterval < 1");
             }
             configUpdateIntervalMillis = configUpdateInterval * 1000;
         }
@@ -61,9 +63,9 @@ namespace SymplifySDK
             _ = LoadConfig();
         }
 
-        public static async Task<SymplifyClient> WithDefault(string websiteID, bool autoLoadConfig = true)
+        public static async Task<SymplifyClient> WithDefaults(string websiteID, HttpClient httpClient, bool autoLoadConfig = true)
         {
-            SymplifyClient client = new SymplifyClient(new ClientConfig(websiteID));
+            SymplifyClient client = new SymplifyClient(new ClientConfig(websiteID), httpClient, new DefaultLogger());
 
             if (autoLoadConfig)
             {
@@ -153,14 +155,21 @@ namespace SymplifySDK
         /// <param name="projectName">The name of the project</param>
         /// <param name="cookieJar">A implementation of a CookieJar, having getCookie and setCookie</param>
         /// <returns>
-        /// string|null the name of the current visitor's assigned variation, 
-        /// null if there is no matching project or no visitor ID was found.
+        /// string|null the name of the current visitor's assigned variation, if one was allocated.
+        /// null if the project or visitor could not be identified, or the config led to a null allocation.
         /// </returns>
         public string FindVariation(string projectName, ICookieJar cookieJar)
         {
             if (Config == null)
             {
                 Logger.Log(LogLevel.ERROR, "findVariation called before config is available");
+                return null;
+            }
+
+            var sympCookie = SymplifyCookie.FromCookies(cookieJar);
+            if (!sympCookie.IsSupported())
+            {
+                // we don't know what this cookie is, so let's not touch anything
                 return null;
             }
 
@@ -177,8 +186,30 @@ namespace SymplifySDK
                 return null;
             }
 
-            string visitorId = Visitor.EnsureVisitorID(cookieJar, WebsiteID);
+            switch (sympCookie.GetProjectAllocationStatus(WebsiteID, project.ID)) {
+                case ProjectAllocationStatus.Allocated:
+                    var variationID = sympCookie.GetAllocatedVariationID(WebsiteID, project.ID);
+                    return project.FindVariationWithId(variationID)?.Name;
+                case ProjectAllocationStatus.NotAllocated:
+                    return null;
+                case ProjectAllocationStatus.Unknown:
+                default:
+                    // if we don't have any persisted allocation status, that
+                    // means we continue below to get one!
+                    break;
+            }
+
+            string visitorId = Visitor.EnsureVisitorID(sympCookie, WebsiteID);
             VariationConfig variation = Allocation.Allocation.FindVariationForVisitor(project, visitorId);
+
+            if (variation == null) {
+                sympCookie.SetAllocatedNullVariation(WebsiteID, project.ID);
+            } else {
+                sympCookie.SetAllocatedVariationID(WebsiteID, project.ID, variation.ID);
+            }
+
+            // TODO(Fabian) persist allocated variation and project info
+            cookieJar.SetCookie(SymplifyCookie.COOKIE_NAME, sympCookie.ToString());
 
             return variation?.Name;
         }

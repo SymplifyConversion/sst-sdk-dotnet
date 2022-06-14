@@ -1,5 +1,4 @@
-﻿using System;
-namespace SymplifySDK.Cookies
+﻿namespace SymplifySDK.Cookies
 {
     public interface ICookieJar
     {

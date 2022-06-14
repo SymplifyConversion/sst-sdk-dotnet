@@ -1,11 +1,10 @@
 ﻿using System;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using SymplifySDK;
-using SymplifySDK.Allocation.Config;
 
 namespace SymplifySDK.DemoApp.Services
 {
@@ -38,7 +37,8 @@ namespace SymplifySDK.DemoApp.Services
         public async Task StartUp()
         {
             _logger.LogInformation("Starting SDK client, loading config");
-            Client = new(_config);
+            // in a real application, the HttpClient would likely be injected
+            Client = new(_config, new HttpClient(), new DefaultLogger());
             await Client.LoadConfig();
         }
 
