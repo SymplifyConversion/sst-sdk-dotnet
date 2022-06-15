@@ -3,5 +3,5 @@
 set -eu
 set -x
 
-dotnet format --verify-no-changes
-dotnet build --configuration release
+dotnet format --no-restore --verify-no-changes
+dotnet build --no-restore --configuration release
