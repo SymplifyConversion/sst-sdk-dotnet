@@ -125,7 +125,7 @@ namespace SymplifySDK.Tests
             foreach (var expect in test?.ExpectSgCookiePropertiesMatch?.Properties())
             {
                 // get the root object first
-                var node = JObject.Parse(WebUtility.UrlDecode(cookieJar.GetCookie(SymplifyCookie.COOKIE_NAME) ?? "{}")).Root;
+                var node = JObject.Parse(WebUtility.UrlDecode(cookieJar.GetCookie(SymplifyCookie.CookieName) ?? "{}")).Root;
                 foreach (var part in expect.Name.Split('/'))
                 {
                     // traverse to an expected leaf

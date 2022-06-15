@@ -8,8 +8,10 @@ namespace SymplifySDK.Allocation.Config
     {
         [JsonPropertyName("id")]
         public long ID { get; }
+
         [JsonPropertyName("name")]
         public string Name { get; set; }
+
         [JsonPropertyName("state")]
         public ProjectState State { get; set; }
 

@@ -9,16 +9,20 @@ variables:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: "1"
   DOTNET_NOLOGO: "true"
 
+lint:
+  stage: build
+  script:
+    - ci/lint.sh
+
 build:
   stage: build
   script:
-    - "dotnet build"
+    - dotnet build
 
 .test: &dotnet_test
   stage: test
   script:
-    - echo running "dotnet test --framework net$SDK_VERSION" 
-    - "dotnet test --framework net$SDK_VERSION"
+    - dotnet test --framework net$SDK_VERSION
 
 test:sdk:6:
   <<: *dotnet_test
@@ -28,4 +32,4 @@ test:sdk:6:
 pack:
   stage: package
   script:
-    - dotnet pack SymplifySDK
+    - dotnet pack --configuration release SymplifySDK

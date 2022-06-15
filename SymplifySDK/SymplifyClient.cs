@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading;
@@ -17,13 +18,14 @@ namespace SymplifySDK
     public class SymplifyClient
     {
         public string WebsiteID { get; set; }
+
         public string CdnBaseURL { get; set; }
 
         private readonly object syncLock = new object();
-        private int configUpdateIntervalMillis = 10000;
-        private Timer _timer;
+        private readonly int configUpdateIntervalMillis = 10000;
+        private readonly HttpClient HttpClient;
 
-        private HttpClient HttpClient;
+        private Timer _timer;
 
         public SymplifyConfig Config { get; set; }
 
@@ -51,14 +53,16 @@ namespace SymplifySDK
             {
                 throw new ArgumentException("configUpdateInterval < 1");
             }
+
             configUpdateIntervalMillis = configUpdateInterval * 1000;
         }
 
-        private Timer CreateConfigTimer() {
+        private Timer CreateConfigTimer()
+        {
             return new Timer(TimerCallback, null, 0, configUpdateIntervalMillis);
         }
 
-        private void TimerCallback(Object o)
+        private void TimerCallback(object o)
         {
             _ = LoadConfig();
         }
@@ -79,9 +83,12 @@ namespace SymplifySDK
         {
             SymplifyConfig config = await FetchConfig();
 
-            if (null == _timer) {
-                lock(syncLock) {
-                    if (null == _timer) {
+            if (_timer == null)
+            {
+                lock (syncLock)
+                {
+                    if (_timer == null)
+                    {
                         Logger.Log(LogLevel.INFO, "no config update timer present, creating");
                         _timer = CreateConfigTimer();
                     }
@@ -100,15 +107,15 @@ namespace SymplifySDK
         public async Task<SymplifyConfig> FetchConfig()
         {
             string url = GetConfigURL();
-            string WebResponse = await DownloadWithHttpClient(url);
+            string jsonResponse = await DownloadWithHttpClient(url);
 
-            if (WebResponse == null)
+            if (jsonResponse == null)
             {
                 Logger.Log(LogLevel.ERROR, "no config JSON to parse");
                 return null;
             }
 
-            return new SymplifyConfig(WebResponse);
+            return new SymplifyConfig(jsonResponse);
         }
 
         private async Task<string> DownloadWithHttpClient(string url)
@@ -127,7 +134,7 @@ namespace SymplifySDK
 
         public string GetConfigURL()
         {
-            return string.Format("{0}/{1}/sstConfig.json", CdnBaseURL, WebsiteID);
+            return string.Format(CultureInfo.InvariantCulture, "{0}/{1}/sstConfig.json", CdnBaseURL, WebsiteID);
         }
 
         public List<string> ListProjects()
@@ -148,8 +155,7 @@ namespace SymplifySDK
             return projectList;
         }
 
-
-        /// <summary> 
+        /// <summary>
         /// Returns the name of the variation the visitor is part of in the project with the given name.
         /// </summary>
         /// <param name="projectName">The name of the project</param>
@@ -177,7 +183,7 @@ namespace SymplifySDK
 
             if (project == null)
             {
-                Logger.Log(LogLevel.WARN, string.Format("project does not exist: {0}", projectName));
+                Logger.Log(LogLevel.WARN, string.Format(CultureInfo.InvariantCulture, "project does not exist: {0}", projectName));
                 return null;
             }
 
@@ -186,7 +192,8 @@ namespace SymplifySDK
                 return null;
             }
 
-            switch (sympCookie.GetProjectAllocationStatus(WebsiteID, project.ID)) {
+            switch (sympCookie.GetProjectAllocationStatus(WebsiteID, project.ID))
+            {
                 case ProjectAllocationStatus.Allocated:
                     var variationID = sympCookie.GetAllocatedVariationID(WebsiteID, project.ID);
                     return project.FindVariationWithId(variationID)?.Name;
@@ -202,19 +209,21 @@ namespace SymplifySDK
             string visitorId = Visitor.EnsureVisitorID(sympCookie, WebsiteID);
             VariationConfig variation = Allocation.Allocation.FindVariationForVisitor(project, visitorId);
 
-            if (variation == null) {
+            if (variation == null)
+            {
                 sympCookie.SetAllocatedNullVariation(WebsiteID, project.ID);
-            } else {
+            }
+            else
+            {
                 sympCookie.SetAllocatedVariationID(WebsiteID, project.ID, variation.ID);
             }
 
             // TODO(Fabian) persist allocated variation and project info
-            cookieJar.SetCookie(SymplifyCookie.COOKIE_NAME, sympCookie.ToString());
+            cookieJar.SetCookie(SymplifyCookie.CookieName, sympCookie.ToString());
 
             return variation?.Name;
         }
 
         public override string ToString() => JsonSerializer.Serialize(this);
     }
-
 }

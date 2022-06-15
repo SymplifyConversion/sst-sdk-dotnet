@@ -3,11 +3,9 @@ using SymplifySDK.Cookies;
 
 namespace SymplifySDK
 {
-    public class Visitor
+    public static class Visitor
     {
-        const int SUPPORTED_COOKIE_VERSION = 1;
-
-        /// <summary> 
+        /// <summary>
         /// Get the current visitor id for this website in <paramref name="cookies"/>.
         /// If none exists, generate it, set it in the website cookie, and return it.
         /// </summary>
@@ -18,9 +16,9 @@ namespace SymplifySDK
         {
             var currID = cookies.GetVisitorID(websiteID);
 
-            if (currID == null || currID == "")
+            if (currID == null || currID == string.Empty)
             {
-                string visitorID = makeID != null ? makeID() : uuidGenerator();
+                string visitorID = makeID != null ? makeID() : UuidGenerator();
                 currID = visitorID;
                 cookies.SetVisitorID(websiteID, currID);
             }
@@ -28,7 +26,7 @@ namespace SymplifySDK
             return currID;
         }
 
-        private static string uuidGenerator()
+        private static string UuidGenerator()
         {
             return Guid.NewGuid().ToString();
         }

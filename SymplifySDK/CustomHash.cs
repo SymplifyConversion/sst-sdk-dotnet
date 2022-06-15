@@ -2,7 +2,7 @@ using System;
 
 namespace SymplifySDK
 {
-    public class CustomHash
+    public static class CustomHash
     {
         public static int HashInWindow(string key, uint window)
         {

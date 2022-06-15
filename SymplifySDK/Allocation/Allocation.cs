@@ -1,5 +1,5 @@
-using System;
 using System.Collections.Generic;
+using System.Globalization;
 using SymplifySDK.Allocation.Config;
 
 namespace SymplifySDK.Allocation
@@ -8,7 +8,8 @@ namespace SymplifySDK.Allocation
     {
         public static VariationConfig FindVariationForVisitor(ProjectConfig project, string visitorId)
         {
-            if (null == visitorId || "" == visitorId) {
+            if (visitorId == null || visitorId == string.Empty)
+            {
                 return null;
             }
 
@@ -16,7 +17,8 @@ namespace SymplifySDK.Allocation
 
             var variation = LookupVariationAt(project, allocation);
 
-            if (variation?.State != ProjectState.Active) {
+            if (variation?.State != ProjectState.Active)
+            {
                 return null;
             }
 
@@ -25,7 +27,7 @@ namespace SymplifySDK.Allocation
 
         private static int GetAllocation(ProjectConfig project, string visitorId)
         {
-            string hashKey = string.Format("{0}:{1}", visitorId, project.ID);
+            string hashKey = string.Format(CultureInfo.InvariantCulture, "{0}:{1}", visitorId, project.ID);
             uint totalWeight = 100;
 
             return CustomHash.HashInWindow(hashKey, totalWeight);
