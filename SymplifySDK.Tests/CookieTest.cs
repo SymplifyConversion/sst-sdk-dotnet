@@ -41,7 +41,7 @@ namespace SymplifySDK.Tests
         [InlineData(RAW_COOKIE, "d5f81f13-0e15-453e-978f-000000000000")]
         public void TestCreateFromJSON(string json, string visid)
         {
-            SymplifyCookie cookie = SymplifyCookie.FromString(json);
+            SymplifyCookie cookie = SymplifyCookie.Decode(json);
             Assert.Equal(1, cookie.GetVersion());
             Assert.Equal(visid, cookie.GetVisitorID("4711"));
         }
@@ -51,8 +51,8 @@ namespace SymplifySDK.Tests
         [InlineData(RAW_COOKIE)]
         public void TestDontDestroyPrevData(string json)
         {
-            SymplifyCookie cookie = SymplifyCookie.FromString(json);
-            var newJSON = WebUtility.UrlDecode(cookie.ToString());
+            SymplifyCookie cookie = SymplifyCookie.Decode(json);
+            var newJSON = WebUtility.UrlDecode(cookie.Encode());
             Assert.Equal(1654780473129, (long)JObject.Parse(newJSON)["4711"]["lv"]);
         }
 
@@ -69,7 +69,7 @@ namespace SymplifySDK.Tests
         public void TestJSONCodec(string cookieVal)
         {
             var originalJSON = WebUtility.UrlDecode(cookieVal);
-            var roundtripJSON = WebUtility.UrlDecode(SymplifyCookie.FromString(originalJSON).ToString());
+            var roundtripJSON = WebUtility.UrlDecode(SymplifyCookie.Decode(originalJSON).Encode());
             Assert.True(
                 JToken.DeepEquals(JObject.Parse(originalJSON), JObject.Parse(roundtripJSON)),
                 $"{originalJSON} != {roundtripJSON}"
@@ -83,7 +83,7 @@ namespace SymplifySDK.Tests
         [InlineData(RAW_COOKIE, 1123, 9115)]
         public void TestGetAllocatedVariation(string json, int projectID, int variationID)
         {
-            SymplifyCookie cookie = SymplifyCookie.FromString(json);
+            SymplifyCookie cookie = SymplifyCookie.Decode(json);
             Assert.Equal(variationID, cookie.GetAllocatedVariationID("4711", projectID));
         }
 

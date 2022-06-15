@@ -5,6 +5,14 @@ namespace SymplifySDK.Allocation.Config
 {
     public class VariationConfig
     {
+        public VariationConfig(long id, string name, uint weight, ProjectState state)
+        {
+            ID = id;
+            Name = name;
+            Weight = weight;
+            State = state;
+        }
+
         [JsonPropertyName("id")]
         public long ID { get; }
 
@@ -16,14 +24,6 @@ namespace SymplifySDK.Allocation.Config
 
         [JsonPropertyName("state")]
         public ProjectState State { get; set; }
-
-        public VariationConfig(long id, string name, uint weight, ProjectState state)
-        {
-            ID = id;
-            Name = name;
-            Weight = weight;
-            State = state;
-        }
 
         public override string ToString() => JsonSerializer.Serialize(this);
     }

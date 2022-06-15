@@ -9,10 +9,6 @@ namespace SymplifySDK
     {
         private readonly string DEFAULT_CDN_BASEURL = "https://cdn-sitegainer.com";
 
-        public string WebsiteID { get; }
-
-        public string CdnBaseURL { get; set; }
-
         public ClientConfig(string websiteID)
         {
             WebsiteID = websiteID;
@@ -24,6 +20,10 @@ namespace SymplifySDK
             WebsiteID = websiteID;
             CdnBaseURL = cdnBaseURL;
         }
+
+        public string WebsiteID { get; }
+
+        public string CdnBaseURL { get; set; }
 
         public override string ToString() => JsonSerializer.Serialize(this);
     }

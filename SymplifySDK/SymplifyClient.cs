@@ -17,20 +17,11 @@ namespace SymplifySDK
     /// </summary>
     public class SymplifyClient
     {
-        public string WebsiteID { get; set; }
-
-        public string CdnBaseURL { get; set; }
-
         private readonly object syncLock = new object();
         private readonly int configUpdateIntervalMillis = 10000;
         private readonly HttpClient HttpClient;
 
         private Timer _timer;
-
-        public SymplifyConfig Config { get; set; }
-
-        // TODO We should be able to use Microsoft.Extensions.Logging, it works on .NET Core
-        private ILogger Logger { get; set; }
 
         public SymplifyClient(ClientConfig clientConfig, HttpClient httpClient, ILogger logger, int configUpdateInterval = 10)
         {
@@ -56,6 +47,15 @@ namespace SymplifySDK
 
             configUpdateIntervalMillis = configUpdateInterval * 1000;
         }
+
+        public string WebsiteID { get; set; }
+
+        public string CdnBaseURL { get; set; }
+
+        // TODO We should be able to use Microsoft.Extensions.Logging, it works on .NET Core
+        private ILogger Logger { get; set; }
+
+        private SymplifyConfig Config { get; set; }
 
         public static async Task<SymplifyClient> WithDefaults(string websiteID, HttpClient httpClient, bool autoLoadConfig = true)
         {
@@ -176,7 +176,7 @@ namespace SymplifySDK
             }
 
             // TODO(Fabian) persist allocated variation and project info
-            cookieJar.SetCookie(SymplifyCookie.CookieName, sympCookie.ToString());
+            cookieJar.SetCookie(SymplifyCookie.CookieName, sympCookie.Encode());
 
             return variation?.Name;
         }

@@ -29,16 +29,6 @@ namespace SymplifySDK.Cookies
             jobj[KEY_COOKIE_GENERATION] = 1;
         }
 
-        public override string ToString() => WebUtility.UrlEncode(jobj.ToString());
-
-        public static SymplifyCookie FromString(string value)
-        {
-            var jsonString = WebUtility.UrlDecode(value);
-            var cookie = JsonSerializer.Deserialize<SymplifyCookie>(jsonString);
-            cookie.jobj = JObject.Parse(jsonString);
-            return cookie;
-        }
-
         public static SymplifyCookie FromCookies(ICookieJar cookies)
         {
             string cookieJSON = cookies.GetCookie(CookieName);
@@ -48,7 +38,20 @@ namespace SymplifySDK.Cookies
                 return new();
             }
 
-            return SymplifyCookie.FromString(cookieJSON);
+            return SymplifyCookie.Decode(cookieJSON);
+        }
+
+        public static SymplifyCookie Decode(string value)
+        {
+            var jsonString = WebUtility.UrlDecode(value);
+            var cookie = JsonSerializer.Deserialize<SymplifyCookie>(jsonString);
+            cookie.jobj = JObject.Parse(jsonString);
+            return cookie;
+        }
+
+        public string Encode()
+        {
+            return WebUtility.UrlEncode(jobj.ToString());
         }
 
         public int GetVersion()

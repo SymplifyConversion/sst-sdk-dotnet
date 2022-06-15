@@ -6,6 +6,13 @@ namespace SymplifySDK.Allocation.Config
 {
     public class ProjectConfig
     {
+        public ProjectConfig(long id, string name, List<VariationConfig> variations)
+        {
+            ID = id;
+            Name = name;
+            Variations = variations;
+        }
+
         [JsonPropertyName("id")]
         public long ID { get; }
 
@@ -17,13 +24,6 @@ namespace SymplifySDK.Allocation.Config
 
         [JsonPropertyName("variations")]
         public List<VariationConfig> Variations { get; set; }
-
-        public ProjectConfig(long id, string name, List<VariationConfig> variations)
-        {
-            ID = id;
-            Name = name;
-            Variations = variations;
-        }
 
         public VariationConfig FindVariationWithId(long variationId)
         {

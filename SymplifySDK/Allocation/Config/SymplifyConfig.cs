@@ -7,12 +7,6 @@ namespace SymplifySDK.Allocation.Config
 {
     public class SymplifyConfig
     {
-        [JsonPropertyName("updated")]
-        public int Updated { get; set; }
-
-        [JsonPropertyName("projects")]
-        public List<ProjectConfig> Projects { get; set; }
-
         public SymplifyConfig()
         {
             Projects = new();
@@ -39,6 +33,12 @@ namespace SymplifySDK.Allocation.Config
                 throw new ArgumentException("Invalid json");
             }
         }
+
+        [JsonPropertyName("updated")]
+        public int Updated { get; set; }
+
+        [JsonPropertyName("projects")]
+        public List<ProjectConfig> Projects { get; set; }
 
         public ProjectConfig FindProjectWithName(string projectName)
         {
