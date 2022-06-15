@@ -5,8 +5,14 @@ using SymplifySDK.Allocation.Config;
 
 namespace SymplifySDK.Allocation
 {
+    /// <summary>
+    /// Allocation houses functions used for calculating variation allocation.
+    /// </summary>
     public static class Allocation
     {
+        /// <summary>
+        /// Finds the variation the given visitor should have in the given project.
+        /// </summary>
         public static VariationConfig FindVariationForVisitor(ProjectConfig project, string visitorId)
         {
             if (visitorId == null || visitorId == string.Empty)

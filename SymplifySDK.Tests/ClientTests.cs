@@ -24,10 +24,10 @@ namespace SymplifySDK.Tests
         }
 
         [Fact]
-        public async void TestGetConfigURLDefaultCDN()
+        public void TestGetConfigURLDefaultCDN()
         {
             //5620148 test website id
-            var client = await SymplifyClient.WithDefaults("4711", fakeHttpClient());
+            var client = new SymplifyClient("4711", fakeHttpClient());
             Assert.Equal("https://cdn-sitegainer.com/4711/sstConfig.json", client.GetConfigURL());
         }
 

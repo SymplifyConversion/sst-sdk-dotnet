@@ -12,20 +12,20 @@ namespace SymplifySDK.Tests
         [Fact]
         public void TestSetCookie()
         {
-            SymplifyCookie sympCookie = new();
-            string returnedID = Visitor.EnsureVisitorID(sympCookie, "TestSite", () => "goober");
+            SymplifyCookie sympCookie = new("TestSite");
+            string returnedID = Visitor.EnsureVisitorID(sympCookie, () => "goober");
 
             Assert.Equal("goober", returnedID);
-            Assert.Equal("goober", sympCookie.GetVisitorID("TestSite"));
+            Assert.Equal("goober", sympCookie.GetVisitorID());
         }
 
         [Fact]
         public void TestReuseCookie()
         {
-            SymplifyCookie sympCookie = new();
-            sympCookie.SetVisitorID("TestSite", "goober");
+            SymplifyCookie sympCookie = new("TestSite");
+            sympCookie.SetVisitorID("goober");
 
-            string returnedID = Visitor.EnsureVisitorID(sympCookie, "TestSite", () => "foobar");
+            string returnedID = Visitor.EnsureVisitorID(sympCookie, () => "foobar");
 
             Assert.Equal("goober", returnedID);
         }
@@ -33,8 +33,8 @@ namespace SymplifySDK.Tests
         [Fact]
         public void TestGenerateUUID()
         {
-            string returnedIDA = Visitor.EnsureVisitorID(new(), "TestSite");
-            string returnedIDB = Visitor.EnsureVisitorID(new(), "TestSite");
+            string returnedIDA = Visitor.EnsureVisitorID(new("TestSite"));
+            string returnedIDB = Visitor.EnsureVisitorID(new("TestSite"));
 
             string uuidPattern = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";
             Assert.Matches(uuidPattern, returnedIDA);

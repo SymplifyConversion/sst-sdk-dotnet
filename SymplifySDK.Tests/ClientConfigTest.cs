@@ -1,5 +1,4 @@
 ﻿using Xunit;
-using SymplifySDK.Allocation.Config;
 
 namespace SymplifySDK.Tests
 {
