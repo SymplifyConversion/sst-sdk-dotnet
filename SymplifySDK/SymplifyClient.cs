@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Net.Http;
-using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+
 using SymplifySDK.Allocation.Config;
 using SymplifySDK.Cookies;
 
@@ -57,16 +57,6 @@ namespace SymplifySDK
             configUpdateIntervalMillis = configUpdateInterval * 1000;
         }
 
-        private Timer CreateConfigTimer()
-        {
-            return new Timer(TimerCallback, null, 0, configUpdateIntervalMillis);
-        }
-
-        private void TimerCallback(object o)
-        {
-            _ = LoadConfig();
-        }
-
         public static async Task<SymplifyClient> WithDefaults(string websiteID, HttpClient httpClient, bool autoLoadConfig = true)
         {
             SymplifyClient client = new SymplifyClient(new ClientConfig(websiteID), httpClient, new DefaultLogger());
@@ -102,39 +92,6 @@ namespace SymplifySDK
             }
 
             Config = config;
-        }
-
-        public async Task<SymplifyConfig> FetchConfig()
-        {
-            string url = GetConfigURL();
-            string jsonResponse = await DownloadWithHttpClient(url);
-
-            if (jsonResponse == null)
-            {
-                Logger.Log(LogLevel.ERROR, "no config JSON to parse");
-                return null;
-            }
-
-            return new SymplifyConfig(jsonResponse);
-        }
-
-        private async Task<string> DownloadWithHttpClient(string url)
-        {
-            try
-            {
-                var response = HttpClient.GetStringAsync(url);
-                return await response;
-            }
-            catch (Exception)
-            {
-                Logger.Log(LogLevel.ERROR, "Could not download " + url);
-                return null;
-            }
-        }
-
-        public string GetConfigURL()
-        {
-            return string.Format(CultureInfo.InvariantCulture, "{0}/{1}/sstConfig.json", CdnBaseURL, WebsiteID);
         }
 
         public List<string> ListProjects()
@@ -224,6 +181,47 @@ namespace SymplifySDK
             return variation?.Name;
         }
 
-        public override string ToString() => JsonSerializer.Serialize(this);
+        public string GetConfigURL()
+        {
+            return string.Format(CultureInfo.InvariantCulture, "{0}/{1}/sstConfig.json", CdnBaseURL, WebsiteID);
+        }
+
+        private async Task<SymplifyConfig> FetchConfig()
+        {
+            string url = GetConfigURL();
+            string jsonResponse = await DownloadWithHttpClient(url);
+
+            if (jsonResponse == null)
+            {
+                Logger.Log(LogLevel.ERROR, "no config JSON to parse");
+                return null;
+            }
+
+            return new SymplifyConfig(jsonResponse);
+        }
+
+        private Timer CreateConfigTimer()
+        {
+            return new Timer(TimerCallback, null, 0, configUpdateIntervalMillis);
+        }
+
+        private void TimerCallback(object o)
+        {
+            _ = LoadConfig();
+        }
+
+        private async Task<string> DownloadWithHttpClient(string url)
+        {
+            try
+            {
+                var response = HttpClient.GetStringAsync(url);
+                return await response;
+            }
+            catch (Exception)
+            {
+                Logger.Log(LogLevel.ERROR, "Could not download " + url);
+                return null;
+            }
+        }
     }
 }

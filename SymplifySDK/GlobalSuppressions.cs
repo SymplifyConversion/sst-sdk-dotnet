@@ -3,16 +3,14 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1000: The keyword 'new' should be followed by a space.", Justification = "does not agree with dotnet format")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1649: File name should match first type name", Justification = "Doesn't seem to handle enums nicely")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("SonarLint", "S1135: Complete the task associated to this 'TODO' comment", Justification = "this is fine as long as we have a ticket tracking the task")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1101: Prefix local calls with this", Justification = "we don't think this is important")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1200: Using directive should appear within a namespace declaration", Justification = "we don't want this")]
 
 // TODO(Fabian) The below suppressions were added when enabling StyleCop.
 // We should either fix them one at a time, or suppress forever by moving the suppression to above the TODO.
 // If there are no suppressions left below, remove this TODO.
-[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1101: Prefix local calls with this", Justification = "Pending")] // 72
-
 // Organiziation
-[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1200: Using directive should appear within a namespace declaration", Justification = "Pending")] // 32
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1201: group fields, constructors, properties, members...", Justification = "Pending")] // 6
-[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1202: 'public' members should come before 'private' members", Justification = "Pending")] // 4
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1204: Static members should appear before ...", Justification = "Pending")] // 1
 
 // Naming

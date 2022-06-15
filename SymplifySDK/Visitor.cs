@@ -1,4 +1,5 @@
 using System;
+
 using SymplifySDK.Cookies;
 
 namespace SymplifySDK

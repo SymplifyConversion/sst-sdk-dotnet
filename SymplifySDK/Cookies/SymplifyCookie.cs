@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Net;
 using System.Text.Json;
+
 using Newtonsoft.Json.Linq;
 
 namespace SymplifySDK.Cookies
@@ -60,16 +61,6 @@ namespace SymplifySDK.Cookies
             return (int)jobj[KEY_COOKIE_GENERATION] == SUPPORTED_COOKIE_VERSION;
         }
 
-        private JObject GetWebsiteData(string websiteID)
-        {
-            if (!jobj.ContainsKey(websiteID))
-            {
-                jobj[websiteID] = new JObject();
-            }
-
-            return (JObject)jobj[websiteID];
-        }
-
         public string GetVisitorID(string websiteID)
         {
             var websiteData = GetWebsiteData(websiteID);
@@ -122,6 +113,29 @@ namespace SymplifySDK.Cookies
             return ProjectAllocationStatus.NotAllocated;
         }
 
+        public IList<long> GetAllocatedProjectIDs(string websiteID)
+        {
+            var websiteData = GetWebsiteData(websiteID);
+            var allocated = websiteData[KEY_ALLOCATED_PROJECTS];
+
+            if (allocated is JArray)
+            {
+                return allocated.ToObject<IList<long>>();
+            }
+
+            return new List<long>();
+        }
+
+        private JObject GetWebsiteData(string websiteID)
+        {
+            if (!jobj.ContainsKey(websiteID))
+            {
+                jobj[websiteID] = new JObject();
+            }
+
+            return (JObject)jobj[websiteID];
+        }
+
         private void AddAllocatedProjectID(string websiteID, long projectID)
         {
             var websiteData = GetWebsiteData(websiteID);
@@ -142,19 +156,6 @@ namespace SymplifySDK.Cookies
             }
 
             allocatedProjects.Add(projectID);
-        }
-
-        public IList<long> GetAllocatedProjectIDs(string websiteID)
-        {
-            var websiteData = GetWebsiteData(websiteID);
-            var allocated = websiteData[KEY_ALLOCATED_PROJECTS];
-
-            if (allocated is JArray)
-            {
-                return allocated.ToObject<IList<long>>();
-            }
-
-            return new List<long>();
         }
     }
 }
