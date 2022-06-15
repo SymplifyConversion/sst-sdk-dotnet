@@ -14,12 +14,11 @@ namespace SymplifySDK.Cookies
 
     public class SymplifyCookie
     {
-
-        public const string COOKIE_NAME = "sg_cookies";
-        const int SUPPORTED_COOKIE_VERSION = 1;
-        const string KEY_COOKIE_GENERATION = "_g";
-        const string KEY_VISITOR_ID = "visid";
-        const string KEY_ALLOCATED_PROJECTS = "aud_p";
+        public const string CookieName = "sg_cookies";
+        private const int SUPPORTED_COOKIE_VERSION = 1;
+        private const string KEY_COOKIE_GENERATION = "_g";
+        private const string KEY_VISITOR_ID = "visid";
+        private const string KEY_ALLOCATED_PROJECTS = "aud_p";
 
         private JObject jobj;
 
@@ -41,7 +40,7 @@ namespace SymplifySDK.Cookies
 
         public static SymplifyCookie FromCookies(ICookieJar cookies)
         {
-            string cookieJSON = cookies.GetCookie(COOKIE_NAME);
+            string cookieJSON = cookies.GetCookie(CookieName);
 
             if (cookieJSON == null)
             {
@@ -67,6 +66,7 @@ namespace SymplifySDK.Cookies
             {
                 jobj[websiteID] = new JObject();
             }
+
             return (JObject)jobj[websiteID];
         }
 
@@ -130,6 +130,7 @@ namespace SymplifySDK.Cookies
             {
                 websiteData[KEY_ALLOCATED_PROJECTS] = new JArray();
             }
+
             var allocatedProjects = (JArray)websiteData[KEY_ALLOCATED_PROJECTS];
 
             foreach (var pid in allocatedProjects)

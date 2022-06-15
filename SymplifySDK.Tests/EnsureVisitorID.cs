@@ -7,7 +7,7 @@ namespace SymplifySDK.Tests
     public class EnsureVisitorID
     {
 
-        const string COOKIE_NAME = SymplifyCookie.COOKIE_NAME;
+        const string COOKIE_NAME = SymplifyCookie.CookieName;
 
         [Fact]
         public void TestSetCookie()
