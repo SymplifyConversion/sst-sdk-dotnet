@@ -19,9 +19,9 @@ namespace SymplifySDK
     {
         private readonly object syncLock = new object();
         private readonly int configUpdateIntervalMillis = 10000;
-        private readonly HttpClient HttpClient;
+        private readonly HttpClient httpClient;
 
-        private Timer _timer;
+        private Timer timerHandle;
 
         public SymplifyClient(ClientConfig clientConfig, HttpClient httpClient, ILogger logger, int configUpdateInterval = 10)
         {
@@ -34,7 +34,7 @@ namespace SymplifySDK
                 throw new ArgumentException("malformed CDN base URL, cannot create SDK client");
             }
 
-            HttpClient = httpClient;
+            this.httpClient = httpClient;
 
             Logger = logger;
 
@@ -73,14 +73,14 @@ namespace SymplifySDK
         {
             SymplifyConfig config = await FetchConfig();
 
-            if (_timer == null)
+            if (timerHandle == null)
             {
                 lock (syncLock)
                 {
-                    if (_timer == null)
+                    if (timerHandle == null)
                     {
                         Logger.Log(LogLevel.INFO, "no config update timer present, creating");
-                        _timer = CreateConfigTimer();
+                        timerHandle = CreateConfigTimer();
                     }
                 }
             }
@@ -214,7 +214,7 @@ namespace SymplifySDK
         {
             try
             {
-                var response = HttpClient.GetStringAsync(url);
+                var response = httpClient.GetStringAsync(url);
                 return await response;
             }
             catch (Exception)

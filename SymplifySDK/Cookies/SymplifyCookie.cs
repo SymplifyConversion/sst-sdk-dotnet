@@ -16,17 +16,17 @@ namespace SymplifySDK.Cookies
     public class SymplifyCookie
     {
         public const string CookieName = "sg_cookies";
-        private const int SUPPORTED_COOKIE_VERSION = 1;
-        private const string KEY_COOKIE_GENERATION = "_g";
-        private const string KEY_VISITOR_ID = "visid";
-        private const string KEY_ALLOCATED_PROJECTS = "aud_p";
+        private const int SupportedCookieVersion = 1;
+        private const string CookieVersionKey = "_g";
+        private const string VisitorIdKey = "visid";
+        private const string AllocatedProjectsKey = "aud_p";
 
         private JObject jobj;
 
         public SymplifyCookie()
         {
             jobj = new();
-            jobj[KEY_COOKIE_GENERATION] = 1;
+            jobj[CookieVersionKey] = 1;
         }
 
         public static SymplifyCookie FromCookies(ICookieJar cookies)
@@ -56,24 +56,24 @@ namespace SymplifySDK.Cookies
 
         public int GetVersion()
         {
-            return (int)jobj[KEY_COOKIE_GENERATION];
+            return (int)jobj[CookieVersionKey];
         }
 
         public bool IsSupported()
         {
-            return (int)jobj[KEY_COOKIE_GENERATION] == SUPPORTED_COOKIE_VERSION;
+            return (int)jobj[CookieVersionKey] == SupportedCookieVersion;
         }
 
         public string GetVisitorID(string websiteID)
         {
             var websiteData = GetWebsiteData(websiteID);
-            return (string)websiteData[KEY_VISITOR_ID];
+            return (string)websiteData[VisitorIdKey];
         }
 
         public void SetVisitorID(string websiteID, string visitorID)
         {
             var websiteData = GetWebsiteData(websiteID);
-            websiteData[KEY_VISITOR_ID] = visitorID;
+            websiteData[VisitorIdKey] = visitorID;
         }
 
         public long GetAllocatedVariationID(string websiteID, long projectID)
@@ -119,7 +119,7 @@ namespace SymplifySDK.Cookies
         public IList<long> GetAllocatedProjectIDs(string websiteID)
         {
             var websiteData = GetWebsiteData(websiteID);
-            var allocated = websiteData[KEY_ALLOCATED_PROJECTS];
+            var allocated = websiteData[AllocatedProjectsKey];
 
             if (allocated is JArray)
             {
@@ -143,12 +143,12 @@ namespace SymplifySDK.Cookies
         {
             var websiteData = GetWebsiteData(websiteID);
 
-            if (!websiteData.ContainsKey(KEY_ALLOCATED_PROJECTS))
+            if (!websiteData.ContainsKey(AllocatedProjectsKey))
             {
-                websiteData[KEY_ALLOCATED_PROJECTS] = new JArray();
+                websiteData[AllocatedProjectsKey] = new JArray();
             }
 
-            var allocatedProjects = (JArray)websiteData[KEY_ALLOCATED_PROJECTS];
+            var allocatedProjects = (JArray)websiteData[AllocatedProjectsKey];
 
             foreach (var pid in allocatedProjects)
             {

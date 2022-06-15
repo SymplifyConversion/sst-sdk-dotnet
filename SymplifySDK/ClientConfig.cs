@@ -7,12 +7,12 @@ namespace SymplifySDK
     /// </summary>
     public class ClientConfig
     {
-        private readonly string DEFAULT_CDN_BASEURL = "https://cdn-sitegainer.com";
+        private const string DefaultCdnBaseUrl = "https://cdn-sitegainer.com";
 
         public ClientConfig(string websiteID)
         {
             WebsiteID = websiteID;
-            CdnBaseURL = DEFAULT_CDN_BASEURL;
+            CdnBaseURL = DefaultCdnBaseUrl;
         }
 
         public ClientConfig(string websiteID, string cdnBaseURL)
