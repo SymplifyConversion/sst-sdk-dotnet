@@ -15,7 +15,7 @@
   <PropertyGroup>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <AnalysisLevel>latest-Recommended</AnalysisLevel>
-    <!-- TODO(Fabian) Disabled until GlobalSuppressions.cs is smaller <GenerateDocumentationFile>true</GenerateDocumentationFile> -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
@@ -26,10 +26,13 @@
     <None Remove="Cookies\" />
     <None Remove="NuGet.Build.Packaging" />
   </ItemGroup>
+
   <ItemGroup>
     <Folder Include="Allocation\" />
     <Folder Include="Cookies\" />
+    <AdditionalFiles Include="stylecop.json" />
   </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="SonarAnalyzer.CSharp" Version="8.40.0.48530">

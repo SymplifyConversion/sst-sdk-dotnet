@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Net.Http;
-using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+
 using SymplifySDK.Allocation.Config;
 using SymplifySDK.Cookies;
 
@@ -17,33 +17,36 @@ namespace SymplifySDK
     /// </summary>
     public class SymplifyClient
     {
-        public string WebsiteID { get; set; }
-
-        public string CdnBaseURL { get; set; }
-
+        private readonly string cdnBaseURL;
+        private readonly string currentWebsiteID;
         private readonly object syncLock = new object();
         private readonly int configUpdateIntervalMillis = 10000;
-        private readonly HttpClient HttpClient;
+        private readonly HttpClient httpClient;
+        private Timer timerHandle;
 
-        private Timer _timer;
-
-        public SymplifyConfig Config { get; set; }
-
-        // TODO We should be able to use Microsoft.Extensions.Logging, it works on .NET Core
-        private ILogger Logger { get; set; }
-
-        public SymplifyClient(ClientConfig clientConfig, HttpClient httpClient, ILogger logger, int configUpdateInterval = 10)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SymplifyClient"/> class.
+        /// </summary>
+        public SymplifyClient(string websiteID, HttpClient httpClient)
+        : this(new ClientConfig(websiteID), httpClient, new DefaultLogger())
         {
-            CdnBaseURL = clientConfig.CdnBaseURL;
-            WebsiteID = clientConfig.WebsiteID;
+        }
 
-            Uri cdnBaseUrlUrl = new Uri(CdnBaseURL);
-            if (cdnBaseUrlUrl.Scheme == null || cdnBaseUrlUrl.Host == null)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SymplifyClient"/> class.
+        /// </summary>
+        public SymplifyClient(ClientConfig clientConfig, HttpClient httpClient, ILogger logger, int configUpdateInterval = 60)
+        {
+            cdnBaseURL = clientConfig.CdnBaseURL;
+            currentWebsiteID = clientConfig.WebsiteID;
+
+            Uri checkURL = new Uri(cdnBaseURL);
+            if (checkURL.Scheme == null || checkURL.Host == null)
             {
                 throw new ArgumentException("malformed CDN base URL, cannot create SDK client");
             }
 
-            HttpClient = httpClient;
+            this.httpClient = httpClient;
 
             Logger = logger;
 
@@ -57,40 +60,26 @@ namespace SymplifySDK
             configUpdateIntervalMillis = configUpdateInterval * 1000;
         }
 
-        private Timer CreateConfigTimer()
-        {
-            return new Timer(TimerCallback, null, 0, configUpdateIntervalMillis);
-        }
+        // TODO We should be able to use Microsoft.Extensions.Logging, it works on .NET Core
+        private ILogger Logger { get; set; }
 
-        private void TimerCallback(object o)
-        {
-            _ = LoadConfig();
-        }
+        private SymplifyConfig Config { get; set; }
 
-        public static async Task<SymplifyClient> WithDefaults(string websiteID, HttpClient httpClient, bool autoLoadConfig = true)
-        {
-            SymplifyClient client = new SymplifyClient(new ClientConfig(websiteID), httpClient, new DefaultLogger());
-
-            if (autoLoadConfig)
-            {
-                await client.LoadConfig();
-            }
-
-            return client;
-        }
-
+        /// <summary>
+        /// Download and use the latest version of the test configuration, await the update.
+        /// </summary>
         public async Task LoadConfig()
         {
             SymplifyConfig config = await FetchConfig();
 
-            if (_timer == null)
+            if (timerHandle == null)
             {
                 lock (syncLock)
                 {
-                    if (_timer == null)
+                    if (timerHandle == null)
                     {
                         Logger.Log(LogLevel.INFO, "no config update timer present, creating");
-                        _timer = CreateConfigTimer();
+                        timerHandle = CreateConfigTimer();
                     }
                 }
             }
@@ -104,39 +93,9 @@ namespace SymplifySDK
             Config = config;
         }
 
-        public async Task<SymplifyConfig> FetchConfig()
-        {
-            string url = GetConfigURL();
-            string jsonResponse = await DownloadWithHttpClient(url);
-
-            if (jsonResponse == null)
-            {
-                Logger.Log(LogLevel.ERROR, "no config JSON to parse");
-                return null;
-            }
-
-            return new SymplifyConfig(jsonResponse);
-        }
-
-        private async Task<string> DownloadWithHttpClient(string url)
-        {
-            try
-            {
-                var response = HttpClient.GetStringAsync(url);
-                return await response;
-            }
-            catch (Exception)
-            {
-                Logger.Log(LogLevel.ERROR, "Could not download " + url);
-                return null;
-            }
-        }
-
-        public string GetConfigURL()
-        {
-            return string.Format(CultureInfo.InvariantCulture, "{0}/{1}/sstConfig.json", CdnBaseURL, WebsiteID);
-        }
-
+        /// <summary>
+        /// List all projects in the current test configuration.
+        /// </summary>
         public List<string> ListProjects()
         {
             if (Config == null)
@@ -156,14 +115,8 @@ namespace SymplifySDK
         }
 
         /// <summary>
-        /// Returns the name of the variation the visitor is part of in the project with the given name.
+        /// Returns the name of the variation the visitor is part of in the project with the given name, or null if the visitor was not allocated.
         /// </summary>
-        /// <param name="projectName">The name of the project</param>
-        /// <param name="cookieJar">A implementation of a CookieJar, having getCookie and setCookie</param>
-        /// <returns>
-        /// string|null the name of the current visitor's assigned variation, if one was allocated.
-        /// null if the project or visitor could not be identified, or the config led to a null allocation.
-        /// </returns>
         public string FindVariation(string projectName, ICookieJar cookieJar)
         {
             if (Config == null)
@@ -172,7 +125,7 @@ namespace SymplifySDK
                 return null;
             }
 
-            var sympCookie = SymplifyCookie.FromCookies(cookieJar);
+            var sympCookie = SymplifyCookie.FromCookies(currentWebsiteID, cookieJar);
             if (!sympCookie.IsSupported())
             {
                 // we don't know what this cookie is, so let's not touch anything
@@ -192,10 +145,10 @@ namespace SymplifySDK
                 return null;
             }
 
-            switch (sympCookie.GetProjectAllocationStatus(WebsiteID, project.ID))
+            switch (sympCookie.GetProjectAllocationStatus(project.ID))
             {
                 case ProjectAllocationStatus.Allocated:
-                    var variationID = sympCookie.GetAllocatedVariationID(WebsiteID, project.ID);
+                    var variationID = sympCookie.GetAllocatedVariationID(project.ID);
                     return project.FindVariationWithId(variationID)?.Name;
                 case ProjectAllocationStatus.NotAllocated:
                     return null;
@@ -206,24 +159,67 @@ namespace SymplifySDK
                     break;
             }
 
-            string visitorId = Visitor.EnsureVisitorID(sympCookie, WebsiteID);
+            string visitorId = Visitor.EnsureVisitorID(sympCookie);
             VariationConfig variation = Allocation.Allocation.FindVariationForVisitor(project, visitorId);
 
             if (variation == null)
             {
-                sympCookie.SetAllocatedNullVariation(WebsiteID, project.ID);
+                sympCookie.SetAllocatedNullVariation(project.ID);
             }
             else
             {
-                sympCookie.SetAllocatedVariationID(WebsiteID, project.ID, variation.ID);
+                sympCookie.SetAllocatedVariationID(project.ID, variation.ID);
             }
 
-            // TODO(Fabian) persist allocated variation and project info
-            cookieJar.SetCookie(SymplifyCookie.CookieName, sympCookie.ToString());
+            cookieJar.SetCookie(SymplifyCookie.CookieName, sympCookie.ToJSON(), 90);
 
             return variation?.Name;
         }
 
-        public override string ToString() => JsonSerializer.Serialize(this);
+        /// <summary>
+        /// Get the URL to the SST config file.
+        /// </summary>
+        public string GetConfigURL()
+        {
+            return string.Format(CultureInfo.InvariantCulture, "{0}/{1}/sstConfig.json", cdnBaseURL, currentWebsiteID);
+        }
+
+        private async Task<SymplifyConfig> FetchConfig()
+        {
+            string url = GetConfigURL();
+            string jsonResponse = await DownloadWithHttpClient(url);
+
+            if (jsonResponse == null)
+            {
+                Logger.Log(LogLevel.ERROR, "no config JSON to parse");
+                return null;
+            }
+
+            return new SymplifyConfig(jsonResponse);
+        }
+
+        private Timer CreateConfigTimer()
+        {
+            return new Timer(TimerCallback, null, 0, configUpdateIntervalMillis);
+        }
+
+        private void TimerCallback(object o)
+        {
+            _ = LoadConfig();
+        }
+
+        private async Task<string> DownloadWithHttpClient(string url)
+        {
+            try
+            {
+                var response = httpClient.GetStringAsync(url);
+                return await response;
+            }
+            catch (Exception)
+            {
+                Logger.Log(LogLevel.ERROR, "Could not download " + url);
+                return null;
+            }
+        }
     }
 }

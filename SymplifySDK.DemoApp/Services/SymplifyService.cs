@@ -20,13 +20,18 @@ namespace SymplifySDK.DemoApp.Services
         {
             _logger = logger;
             _serviceProvider = serviceProvider;
-            string websiteId = Environment.GetEnvironmentVariable("SSTSDK_WEBSITEID") ?? "4711";
+            string websiteId = GetWebsiteID();
             string cdnHost = Environment.GetEnvironmentVariable("SSTSDK_CDNHOST") ?? "fake-cdn.localhost.test";
             string cdnPort = Environment.GetEnvironmentVariable("SSTSDK_CDNPORT") ?? "5443";
             string cdnBaseURL = "https://" + cdnHost + ":" + cdnPort;
 
             _config = new(websiteId, cdnBaseURL);
             _logger.LogInformation("Created service with config: {ClientConfig}", _config);
+        }
+
+        public string GetWebsiteID()
+        {
+            return Environment.GetEnvironmentVariable("SSTSDK_WEBSITEID") ?? "5620187";
         }
 
         public SymplifyClient GetClient()
@@ -59,6 +64,7 @@ namespace SymplifySDK.DemoApp.Services
 
     public interface ISymplifyService
     {
+        public string GetWebsiteID();
         public SymplifyClient GetClient();
         public Task StartUp();
     }

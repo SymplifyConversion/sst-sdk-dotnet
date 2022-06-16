@@ -212,8 +212,7 @@ namespace SymplifySDK.Tests
         [Fact]
         public void TestCannotBeCreatedWithMissingRootFields()
         {
-            SymplifyConfig config = new SymplifyConfig(CONFIG_JSON_MISSING_ROOT_PROPERTY);
-            Assert.Equal(0, config.Updated);
+            Assert.Throws<ArgumentException>(() => new SymplifyConfig(CONFIG_JSON_MISSING_ROOT_PROPERTY));
         }
 
         [Fact]
