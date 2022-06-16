@@ -14,6 +14,11 @@ namespace SymplifySDK.DemoApp.Pages
             _service = service;
         }
 
+        public string GetWebsiteID()
+        {
+            return _service.GetWebsiteID();
+        }
+
         public void OnGet()
         {
             client = _service.GetClient();

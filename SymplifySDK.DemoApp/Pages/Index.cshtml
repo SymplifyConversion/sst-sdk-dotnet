@@ -6,7 +6,7 @@
 <h1>@ViewData["Title"]</h1>
 
 @if(Model.client.ListProjects().Count == 0) {
-    <p>There are currently no active projects for website @Model.client.WebsiteID</p>
+    <p>There are currently no active projects for website @Model.GetWebsiteID()</p>
 }
 
 @foreach (string projectName in Model.client.ListProjects())
