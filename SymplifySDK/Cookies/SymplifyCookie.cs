@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Net;
 
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace SymplifySDK.Cookies
@@ -76,25 +77,24 @@ namespace SymplifySDK.Cookies
                 return new(websiteID);
             }
 
-            return SymplifyCookie.Decode(websiteID, cookieJSON);
+            return SymplifyCookie.FromJSON(websiteID, cookieJSON);
         }
 
         /// <summary>
-        /// Encodes the cookie from JSON.
+        /// Deserializes the cookie from JSON.
         /// </summary>
-        public static SymplifyCookie Decode(string websiteID, string value)
+        public static SymplifyCookie FromJSON(string websiteID, string value)
         {
-            var jsonString = WebUtility.UrlDecode(value);
-            var underlying = JObject.Parse(jsonString);
+            var underlying = JObject.Parse(value);
             return new(websiteID, underlying);
         }
 
         /// <summary>
-        /// Encodes the JSON cookie.
+        /// Serializes the JSON cookie.
         /// </summary>
-        public string Encode()
+        public string ToJSON()
         {
-            return WebUtility.UrlEncode(jobj.ToString());
+            return jobj.ToString(Formatting.None);
         }
 
         /// <summary>

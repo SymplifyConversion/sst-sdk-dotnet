@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+
 using SymplifySDK.Cookies;
 using Xunit;
 
@@ -43,7 +44,10 @@ namespace SymplifySDK.Tests
         }
     }
 
-    public class CookieJar : ICookieJar
+    /// <summary>
+    /// RawCookieJar is an in memory cookie jar not tied to any request. It just uses a dictionary for storage, and does no encoding or decoding (hence "raw").
+    /// </summary>
+    public class RawCookieJar : ICookieJar
     {
         public Dictionary<string, string> Cookies = new Dictionary<string, string>();
 
@@ -57,7 +61,7 @@ namespace SymplifySDK.Tests
             return null;
         }
 
-        public void SetCookie(string name, string value)
+        public void SetCookie(string name, string value, uint expireInDays)
         {
             Cookies[name] = value;
         }

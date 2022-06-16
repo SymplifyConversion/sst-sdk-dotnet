@@ -171,8 +171,7 @@ namespace SymplifySDK
                 sympCookie.SetAllocatedVariationID(project.ID, variation.ID);
             }
 
-            // TODO(Fabian) persist allocated variation and project info
-            cookieJar.SetCookie(SymplifyCookie.CookieName, sympCookie.Encode());
+            cookieJar.SetCookie(SymplifyCookie.CookieName, sympCookie.ToJSON(), 90);
 
             return variation?.Name;
         }

@@ -109,10 +109,11 @@ namespace SymplifySDK.Tests
             await client.LoadConfig();
 
             // prepare the per request data
-            CookieJar cookieJar = new();
+            RawCookieJar cookieJar = new();
             foreach (var cookie in test?.Cookies ?? new())
             {
-                cookieJar.SetCookie(cookie.Key, cookie.Value);
+                // the test data has encoded cookies, but our raw cookie jar for tests doesn't have any codec
+                cookieJar.SetCookie(cookie.Key, WebUtility.UrlDecode(cookie.Value), 99);
             }
 
             // simulate the request
