@@ -31,7 +31,7 @@ namespace SymplifySDK.DemoApp.Services
 
         public string GetWebsiteID()
         {
-            return Environment.GetEnvironmentVariable("SSTSDK_WEBSITEID") ?? "4711";
+            return Environment.GetEnvironmentVariable("SSTSDK_WEBSITEID") ?? "5620187";
         }
 
         public SymplifyClient GetClient()

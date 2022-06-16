@@ -55,7 +55,7 @@ To not rely on production servers for testing, you can use the fake CDN in the
 
 ```shell
 $ cd caddy/fakeCDN
-$ caddy
+$ caddy run
 ```
 
 For its hostname (fake-cdn.localhost.test) to be usable, you need to add it to
@@ -69,7 +69,9 @@ To Run the application: `dotnet run --project SymplifySDK.DemoApp`.
 
 You can now browse the site at http://127.0.0.1:61265. There is a Caddyfile in
 [caddy](caddy) you can use if you want to browse
-https://symplify-demoapp.localhost.test instead (i.e. using TLS).
+https://symplify-demoapp.localhost.test instead (i.e. using TLS). It needs port
+443 free, and your hosts file to be setup of course. This is also required for
+cookies to work in this example app.
 
 This example app uses a service created for providing the SDK functionality (see
 `services/SymplifyService`). See `Startup.cs` file in the `ConfigureServices` function.
