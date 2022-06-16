@@ -13,6 +13,13 @@ namespace SymplifySDK.Allocation.Config
         /// <summary>
         /// Initializes a new instance of the <see cref="SymplifyConfig"/> class.
         /// </summary>
+        public SymplifyConfig()
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SymplifyConfig"/> class.
+        /// </summary>
         public SymplifyConfig(int updated, List<ProjectConfig> projects)
         {
             Updated = updated;
@@ -32,9 +39,19 @@ namespace SymplifySDK.Allocation.Config
                 Updated = config.Updated;
                 Projects = config.Projects;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw new ArgumentException("Invalid json");
+                throw new ArgumentException("Invalid configuration JSON.", ex);
+            }
+
+            if (Updated <= 0)
+            {
+                throw new ArgumentException("Invalid JSON, missing 'updated' property.");
+            }
+
+            if (Projects == null)
+            {
+                throw new ArgumentException("Invalid JSON, missing 'projects' property.");
             }
         }
 
@@ -42,7 +59,7 @@ namespace SymplifySDK.Allocation.Config
         /// Gets or sets the updated timestamp.
         /// </summary>
         [JsonPropertyName("updated")]
-        public int Updated { get; set; }
+        public long Updated { get; set; }
 
         /// <summary>
         /// Gets or sets the current projects.
