@@ -28,4 +28,4 @@ dotnet test --configuration release /p:Version="$VERSION" --no-build
 
 dotnet pack Symplify.Conversion.SDK --configuration Release /p:Version="$VERSION" --no-build --output .
 
-dotnet nuget push ./*"$VERSION.nupkg" --api-key "$NUGET_API_KEY"
+dotnet nuget push ./*"$VERSION.nupkg" --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json
