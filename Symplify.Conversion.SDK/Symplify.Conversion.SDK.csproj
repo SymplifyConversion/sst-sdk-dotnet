@@ -29,6 +29,9 @@
     <None Remove="Allocation\" />
     <None Remove="Cookies\" />
     <None Remove="NuGet.Build.Packaging" />
+    <None Include="../CHANGELOG.md" Pack="true" PackagePath=""/>
+    <None Include="../LICENSE" Pack="true" PackagePath=""/>
+    <None Include="../README.md" Pack="true" PackagePath=""/>
   </ItemGroup>
 
   <ItemGroup>
