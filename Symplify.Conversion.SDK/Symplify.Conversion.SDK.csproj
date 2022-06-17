@@ -1,0 +1,51 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Package meta -->
+  <PropertyGroup>
+    <Title>Symplify SST SDK</Title>
+    <PackageId>Symplify.Conversion.SDK</PackageId>
+    <Authors>Alexander Backlund, Fabian bergström</Authors>
+    <Description>SDK for server side testing with Symplify Conversion.</Description>
+    <Copyright>Copyright (c) 2022 Symplify Technologies AB</Copyright>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/SymplifyConversion/sst-sdk-dotnet</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageTags>Symplify SST SDK</PackageTags>
+  </PropertyGroup>
+
+  <!-- Build settings -->
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisLevel>latest-Recommended</AnalysisLevel>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Allocation\" />
+    <None Remove="Cookies\" />
+    <None Remove="NuGet.Build.Packaging" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Allocation\" />
+    <Folder Include="Cookies\" />
+    <AdditionalFiles Include="stylecop.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="SonarAnalyzer.CSharp" Version="8.40.0.48530">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+</Project>
