@@ -20,8 +20,6 @@ set -e
 set -u
 set -x
 
-git branch --remote --contains | grep origin/main
-
 dotnet restore
 
 dotnet build --configuration release /p:Version="$VERSION"
