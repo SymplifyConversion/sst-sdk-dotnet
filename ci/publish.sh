@@ -20,10 +20,9 @@ set -e
 set -u
 set -x
 
-echo "verifying this commit is in origin/main"
 git branch --remote --contains | grep origin/main
 
-echo "OK, packaging version $VERSION ..."
+dotnet restore
 
 dotnet build --configuration release /p:Version="$VERSION"
 
@@ -31,4 +30,4 @@ dotnet test --configuration release /p:Version="$VERSION" --no-build
 
 dotnet pack Symplify.Conversion.SDK --configuration Release /p:Version="$VERSION" --no-build --output .
 
-echo "TODO dotnet nuget push " *"$VERSION.nupkg" " --api-key NUGET_KEY"
+dotnet nuget push ./*"$VERSION.nupkg" --api-key "$NUGET_API_KEY"
