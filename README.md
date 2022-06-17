@@ -30,7 +30,7 @@ On each request where you want to use variations:
 
 1. Call findVariation, providing a `CookieJar` (see below)
 
-See example usage in the project `SymplifySDK.DemoApp` (and instructions in [CONTRIBUTING.md](CONTRIBUTING.md))
+See example usage in the project `Symplify.Conversion.SDK.DemoApp` (and instructions in [CONTRIBUTING.md](CONTRIBUTING.md))
 
 ### CookieJar
 

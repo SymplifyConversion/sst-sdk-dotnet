@@ -32,4 +32,4 @@ test:sdk:6:
 pack:
   stage: package
   script:
-    - dotnet pack --configuration release SymplifySDK
+    - dotnet pack --configuration release Symplify.Conversion.SDK

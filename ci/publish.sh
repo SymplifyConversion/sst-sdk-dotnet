@@ -29,6 +29,6 @@ dotnet build --configuration release /p:Version="$VERSION"
 
 dotnet test --configuration release /p:Version="$VERSION" --no-build
 
-dotnet pack SymplifySDK --configuration Release /p:Version="$VERSION" --no-build --output .
+dotnet pack Symplify.Conversion.SDK --configuration Release /p:Version="$VERSION" --no-build --output .
 
 echo "TODO dotnet nuget push " *"$VERSION.nupkg" " --api-key NUGET_KEY"

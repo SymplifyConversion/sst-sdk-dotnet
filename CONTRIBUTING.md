@@ -15,12 +15,12 @@ dotnet test
 
 ## Unit Testing
 
-The project `SymplifySDK.Tests` contains all the test files. Run `dotnet test`
+The project `Symplify.Conversion.SDK.Tests` contains all the test files. Run `dotnet test`
 to run the tests.
 
 ## Testing with a local site
 
-See [the example](SymplifySDK.DemoApp/).
+See [the example](Symplify.Conversion.SDK.DemoApp/).
 
 ### Fake CDN
 
@@ -37,9 +37,9 @@ your [hosts file], for 127.0.0.1.
 
 ### Run the example application
 
-The project `SymplifySDK.DemoApp` is a ASP.NET Core application with Razor
+The project `Symplify.Conversion.SDK.DemoApp` is a ASP.NET Core application with Razor
 pages. It just shows an HTML page listing all the configured projects.
-To Run the application: `dotnet run --project SymplifySDK.DemoApp`.
+To Run the application: `dotnet run --project Symplify.Conversion.SDK.DemoApp`.
 
 You can now browse the site at http://127.0.0.1:61265. There is a Caddyfile in
 [caddy](caddy) you can use if you want to browse
