@@ -12,7 +12,7 @@ We practice [trunk based development](https://trunkbaseddevelopment.com) and
 1. get the pull request reviewed and approved
 1. push the branch, then squash merge your changes to `main`
 1. tag the merged commit `vX.Y.Z` and push the tag (CI should pick this up and publish the version)
-1. [create a matching GitHub release](https://github.com/SymplifyConversion/sst-sdk-nodejs/releases/new)
+1. [create a matching GitHub release](https://github.com/SymplifyConversion/sst-sdk-dotnet/releases/new)
 
 ## Pre-releases
 
