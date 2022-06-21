@@ -20,7 +20,7 @@ See [CHANGELOG.md](CHANGELOG.md).
 Using the dotnet CLI:
 
 ```shell
-dotnet add package Symplify.Conversion.SDK --prerelease
+dotnet add package Symplify.Conversion.SDK
 ```
 
 https://www.nuget.org/packages/Symplify.Conversion.SDK has installation
