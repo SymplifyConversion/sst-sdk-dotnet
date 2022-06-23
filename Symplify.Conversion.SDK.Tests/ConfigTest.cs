@@ -245,7 +245,6 @@ namespace Symplify.Conversion.SDK.Tests
 
         [Theory]
         [InlineData(CONFIG_JSON_DISCOUNT, 0)]
-        [InlineData(CONFIG_JSON_WITH_BOM, 0)]
         [InlineData(CONFIG_JSON_WITH_PRIVACY_MODE_2, 2)]
         public void TestCanReadPrivacyMode(string json, uint privacyMode)
         {
