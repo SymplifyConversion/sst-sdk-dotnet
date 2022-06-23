@@ -139,7 +139,7 @@ namespace Symplify.Conversion.SDK.Tests
         ""updated"": 1648466732,
         ""projects"": [
             {
-            ""id"": 4711,
+                ""id"": 4711,
                 ""name"": ""discount"",
                 ""variations"": [
                     {
@@ -156,6 +156,20 @@ namespace Symplify.Conversion.SDK.Tests
                         ""id"": 9999,
                         ""name"": ""small""
                     }
+                ]
+            }
+        ]}";
+
+        private const string CONFIG_JSON_WITH_PRIVACY_MODE_2 = @"{
+        ""updated"": 1648466732,
+        ""privacy_mode"": 2,
+        ""projects"": [
+            {
+                ""id"": 4711,
+                ""name"": ""discount"",
+                ""variations"": [
+                    { ""id"": 42, ""name"": ""original"", ""weight"": 10 },
+                    { ""id"": 1337, ""name"": ""huge"", ""weight"": 2 }
                 ]
             }
         ]}";
@@ -227,6 +241,15 @@ namespace Symplify.Conversion.SDK.Tests
         {
             SymplifyConfig config = new SymplifyConfig(CONFIG_JSON_MISSING_PROJECT_PROPERTY);
             Assert.Equal((uint)1, config.Projects[0].Variations[2].Weight);
+        }
+
+        [Theory]
+        [InlineData(CONFIG_JSON_DISCOUNT, 0)]
+        [InlineData(CONFIG_JSON_WITH_BOM, 0)]
+        [InlineData(CONFIG_JSON_WITH_PRIVACY_MODE_2, 2)]
+        public void TestCanReadPrivacyMode(string json, uint privacyMode)
+        {
+            Assert.Equal(privacyMode, (new SymplifyConfig(json)).PrivacyMode);
         }
     }
 }
