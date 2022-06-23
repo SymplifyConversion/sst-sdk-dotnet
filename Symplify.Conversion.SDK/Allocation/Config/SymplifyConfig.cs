@@ -38,6 +38,7 @@ namespace Symplify.Conversion.SDK.Allocation.Config
 
                 Updated = config.Updated;
                 Projects = config.Projects;
+                PrivacyMode = config.PrivacyMode;
             }
             catch (Exception ex)
             {
@@ -60,6 +61,12 @@ namespace Symplify.Conversion.SDK.Allocation.Config
         /// </summary>
         [JsonPropertyName("updated")]
         public long Updated { get; set; }
+
+        /// <summary>
+        /// Gets or sets the site privacy mode.
+        /// </summary>
+        [JsonPropertyName("privacy_mode")]
+        public uint PrivacyMode { get; set; }
 
         /// <summary>
         /// Gets or sets the current projects.

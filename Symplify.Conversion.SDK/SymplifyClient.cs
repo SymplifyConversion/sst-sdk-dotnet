@@ -125,6 +125,11 @@ namespace Symplify.Conversion.SDK
                 return null;
             }
 
+            if (Config.PrivacyMode == 2 && cookieJar.GetCookie("sg_optin") != "1")
+            {
+                return null;
+            }
+
             var sympCookie = SymplifyCookie.FromCookies(currentWebsiteID, cookieJar);
             if (!sympCookie.IsSupported())
             {
