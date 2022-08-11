@@ -10,9 +10,9 @@ namespace Symplify.Conversion.SDK.Tests
         [Fact]
         public void testErrorLog()
         {
-            LogSpy logSpy = new();
-            ClientConfig cfg = new("4711", "https://localhost:10000");
-            SymplifyClient sdk = new(cfg, new HttpClient(), logSpy);
+            LogSpy logSpy = new LogSpy();
+            ClientConfig cfg = new ClientConfig("4711", "https://localhost:10000");
+            SymplifyClient sdk = new SymplifyClient(cfg, new HttpClient(), logSpy);
             List<string> projects = sdk.ListProjects();
 
             Assert.Empty(projects);

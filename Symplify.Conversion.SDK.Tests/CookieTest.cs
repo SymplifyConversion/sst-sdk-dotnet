@@ -59,7 +59,7 @@ namespace Symplify.Conversion.SDK.Tests
         [Fact]
         public void TestCreateFromScratch()
         {
-            SymplifyCookie cookie = new("anything");
+            SymplifyCookie cookie = new SymplifyCookie("anything");
             Assert.Equal(1, cookie.GetVersion());
         }
 
@@ -92,7 +92,7 @@ namespace Symplify.Conversion.SDK.Tests
         {
             int projectID = 1337;
             int variationID = 42;
-            SymplifyCookie cookie = new("4711");
+            SymplifyCookie cookie = new SymplifyCookie("4711");
             cookie.SetAllocatedVariationID(projectID, variationID);
             Assert.Equal(variationID, cookie.GetAllocatedVariationID(projectID));
         }
@@ -101,7 +101,7 @@ namespace Symplify.Conversion.SDK.Tests
         public void TestAllocatedProjectSet()
         {
             int projectID = 1337;
-            SymplifyCookie cookie = new("some site id");
+            SymplifyCookie cookie = new SymplifyCookie("some site id");
 
             cookie.SetAllocatedVariationID(projectID, 42);
             Assert.Equal(42, cookie.GetAllocatedVariationID(projectID));
