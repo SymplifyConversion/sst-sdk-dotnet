@@ -2,6 +2,8 @@
 
 Requirements:
 
+- [.NET](https://dotnet.microsoft.com/en-us/download)
+- (for .NET Framework 4.7 support outside Windows) [Mono](https://www.mono-project.com/download/stable/)
 - [Caddy](https://caddyserver.com)
 
 1. Clone this repository
@@ -15,8 +17,15 @@ dotnet test
 
 ## Unit Testing
 
-The project `Symplify.Conversion.SDK.Tests` contains all the test files. Run `dotnet test`
-to run the tests.
+The project `Symplify.Conversion.SDK.Tests` contains all the test code. Run
+`dotnet test` to run the tests for all target frameworks.
+
+If your `dotnet` CLI does not handle all target frameworks (e.g. you are on macOS), you will have to test them separately:
+
+```shell
+./ci/test_net6.0.sh
+./ci/test_net47.sh
+```
 
 ## Testing with a local site
 
