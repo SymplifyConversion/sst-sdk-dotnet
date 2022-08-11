@@ -1,0 +1,29 @@
+name: .NET Framework 4.7 CI
+
+on:
+  push:
+    branches: [ "main", "feature/**" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup .NET (for building)
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: 6.0.x
+    - name: Setup Mono (for running)
+      run: |
+        sudo apt-get update
+        sudo apt-get -y install mono-devel nuget
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Lint
+      run: ci/lint.sh
+    - name: Test
+      run: ci/test_net47.sh
