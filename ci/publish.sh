@@ -24,7 +24,8 @@ dotnet restore
 
 dotnet build --configuration release /p:Version="$VERSION"
 
-dotnet test --configuration release /p:Version="$VERSION" --no-build
+# sanity check test
+dotnet test -f net6.0 --configuration release /p:Version="$VERSION" --no-build
 
 dotnet pack Symplify.Conversion.SDK --configuration Release /p:Version="$VERSION" --no-build --output .
 
