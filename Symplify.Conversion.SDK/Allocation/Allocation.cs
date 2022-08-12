@@ -43,7 +43,7 @@ namespace Symplify.Conversion.SDK.Allocation
         private static VariationConfig LookupVariationAt(ProjectConfig project, uint allocation)
         {
             uint totalWeight = 0;
-            List<(uint weight, long id)> variationThresholds = new();
+            List<(uint weight, long id)> variationThresholds = new List<(uint weight, long id)>();
 
             foreach (VariationConfig variationConfig in project.Variations)
             {

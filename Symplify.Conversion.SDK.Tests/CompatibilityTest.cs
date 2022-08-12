@@ -108,8 +108,9 @@ namespace Symplify.Conversion.SDK.Tests
             await client.LoadConfig();
 
             // prepare the per request data
-            RawCookieJar cookieJar = new();
-            foreach (var cookie in test?.Cookies ?? new())
+            RawCookieJar cookieJar = new RawCookieJar();
+            Dictionary<string, string> testCookies = test?.Cookies ?? new Dictionary<string, string>();
+            foreach (var cookie in testCookies)
             {
                 // the test data has encoded cookies, but our raw cookie jar for tests doesn't have any codec
                 cookieJar.SetCookie(cookie.Key, WebUtility.UrlDecode(cookie.Value), 99);
@@ -129,7 +130,7 @@ namespace Symplify.Conversion.SDK.Tests
                 foreach (var part in expect.Name.Split('/'))
                 {
                     // traverse to an expected leaf
-                    if (node is not JObject)
+                    if (!(node is JObject))
                     {
                         break;
                     }

@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Changed
+- add support for .NET Framework 4.7
 - add hash function tests
 
 ## [0.2.0] - 2022-06-23

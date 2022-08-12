@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Net;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -47,7 +46,7 @@ namespace Symplify.Conversion.SDK.Cookies
         /// Initializes a new instance of the <see cref="SymplifyCookie"/> class.
         /// </summary>
         public SymplifyCookie(string websiteID)
-        : this(websiteID, new())
+        : this(websiteID, new JObject())
         {
         }
 
@@ -74,7 +73,7 @@ namespace Symplify.Conversion.SDK.Cookies
 
             if (cookieJSON == null)
             {
-                return new(websiteID);
+                return new SymplifyCookie(websiteID);
             }
 
             return SymplifyCookie.FromJSON(websiteID, cookieJSON);
@@ -86,7 +85,7 @@ namespace Symplify.Conversion.SDK.Cookies
         public static SymplifyCookie FromJSON(string websiteID, string value)
         {
             var underlying = JObject.Parse(value);
-            return new(websiteID, underlying);
+            return new SymplifyCookie(websiteID, underlying);
         }
 
         /// <summary>
