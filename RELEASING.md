@@ -5,8 +5,8 @@ We practice [trunk based development](https://trunkbaseddevelopment.com) and
 
 1. pull latest `main`
 1. review "Unreleased" in [the changelog](./CHANGELOG.md) to decide if
-   the release is a major, minor, or patch release `vX.Y.Z`
-1. create a new branch `release/vX.Y.Z` matching the version
+   the release should be a major, minor, or patch release `vX.Y.Z`
+1. create a new branch `release/vX.Y.Z` matching the version decided
 1. update links and headings in [the changelog](./CHANGELOG.md) to reflect the new version
 1. open a pull request with your release branch
 1. get the pull request reviewed and approved
