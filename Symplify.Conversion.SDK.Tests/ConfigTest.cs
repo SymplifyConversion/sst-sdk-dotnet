@@ -204,7 +204,10 @@ namespace Symplify.Conversion.SDK.Tests
         [Fact]
         public void TestCannotBeCreatedWithFloatWeights()
         {
-            Assert.Throws<ArgumentException>(() => new SymplifyConfig(CONFIG_JSON_WITH_FLOAT_WEIGHTS));
+            SymplifyConfig config = new SymplifyConfig(CONFIG_JSON_WITH_FLOAT_WEIGHTS);
+            Assert.Equal(1648466732, config.Updated);
+            Assert.Single(config.Projects);
+            Assert.Equal(3, config.Projects[0].Variations.Count);
         }
 
         [Fact]
@@ -246,9 +249,9 @@ namespace Symplify.Conversion.SDK.Tests
         [Theory]
         [InlineData(CONFIG_JSON_DISCOUNT, 0)]
         [InlineData(CONFIG_JSON_WITH_PRIVACY_MODE_2, 2)]
-        public void TestCanReadPrivacyMode(string json, uint privacyMode)
+        public void TestCanReadPrivacyMode(string json, int privacyMode)
         {
-            Assert.Equal(privacyMode, (new SymplifyConfig(json)).PrivacyMode);
+            Assert.Equal(privacyMode, (new SymplifyConfig(json)).Privacy_mode);
         }
     }
 }

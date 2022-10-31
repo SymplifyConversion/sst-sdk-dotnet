@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-
+using Newtonsoft.Json;
 using Symplify.Conversion.SDK.Allocation.Config;
 using Symplify.Conversion.SDK.Audience;
 using Symplify.Conversion.SDK.Cookies;
@@ -127,7 +128,7 @@ namespace Symplify.Conversion.SDK
                 return null;
             }
 
-            if (Config.PrivacyMode == 2 && cookieJar.GetCookie("sg_optin") != "1")
+            if (Config.Privacy_mode == 2 && cookieJar.GetCookie("sg_optin") != "1")
             {
                 return null;
             }
@@ -152,6 +153,11 @@ namespace Symplify.Conversion.SDK
                 return null;
             }
 
+            if (sympCookie.GetPreviewData() != null)
+            {
+                return HandlePreview(sympCookie, project, cookieJar, customAttributes);
+            }
+
             switch (sympCookie.GetProjectAllocationStatus(project.ID))
             {
                 case ProjectAllocationStatus.Allocated:
@@ -166,10 +172,10 @@ namespace Symplify.Conversion.SDK
                     break;
             }
 
-            if (project.AudienceRules.Count != 0)
+            if (project.Audience_rules.Count != 0)
             {
-                Console.WriteLine("HJ");
-                var audience = new SymplifyAudience(project.AudienceRules);
+
+                var audience = new SymplifyAudience(project.Audience_rules);
 
                 if (!doesAudienceApply(audience, customAttributes)) {
                     return null;
@@ -191,6 +197,42 @@ namespace Symplify.Conversion.SDK
             cookieJar.SetCookie(SymplifyCookie.CookieName, sympCookie.ToJSON(), 90);
 
             return variation?.Name;
+        }
+
+        private string HandlePreview(SymplifyCookie sympCookie, ProjectConfig project, ICookieJar cookieJar, dynamic customAttributes)
+        {
+            if (project.Audience_rules.Count > 0)
+            {
+                SymplifyAudience audience = new SymplifyAudience(project.Audience_rules);
+
+                dynamic audienceTrace = audience.Trace(customAttributes);
+
+                if (audienceTrace is string)
+                {
+                    return null;
+                }
+
+                cookieJar.SetCookie("sg_audience_trace", JsonConvert.SerializeObject(audienceTrace), 1);
+
+                if (!doesAudienceApply(audience, customAttributes)){
+                    return null;
+                }
+            }
+            
+
+            VariationConfig variation = null;
+            if (sympCookie.GetPreviewData().ContainsKey("variationId"))
+            {
+                int variationId = sympCookie.GetPreviewData()["variationId"];
+                variation = project.FindVariationWithId(variationId);
+            }
+
+            if (variation != null) {
+                sympCookie.SetAllocatedVariationID(project.ID, variation.ID);
+                cookieJar.SetCookie(SymplifyCookie.CookieName, sympCookie.ToJSON(), 90);
+            }
+
+            return variation.Name ?? null;
         }
 
         /// <summary>

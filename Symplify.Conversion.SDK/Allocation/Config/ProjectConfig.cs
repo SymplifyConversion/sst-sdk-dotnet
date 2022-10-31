@@ -13,12 +13,12 @@ namespace Symplify.Conversion.SDK.Allocation.Config
         /// <summary>
         /// Initializes a new instance of the <see cref="ProjectConfig"/> class.
         /// </summary>
-        public ProjectConfig(long id, string name, List<VariationConfig> variations, List<dynamic> audienceRules = null)
+        public ProjectConfig(long id, string name, List<VariationConfig> variations, JArray audienceRules = null)
         {
             ID = id;
             Name = name;
             Variations = variations;
-            AudienceRules = audienceRules ?? new List<dynamic>();
+            Audience_rules = audienceRules ?? new JArray();
         }
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace Symplify.Conversion.SDK.Allocation.Config
         /// Gets or sets the audience rules for the project.
         /// </summary>
         [JsonPropertyName("audience_rules")]
-        public List<dynamic> AudienceRules { get; set; }
+        public JArray Audience_rules { get; set; }
 
     /// <summary>
     /// Returns the variation with the given ID, or null if there is no match.

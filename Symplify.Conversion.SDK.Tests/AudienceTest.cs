@@ -71,14 +71,12 @@ namespace Symplify.Conversion.SDK.Tests
 
             foreach (dynamic j in jsonObject)
             {
-                Console.WriteLine(j["suite_name"]);
                 foreach (dynamic testCase in j["test_cases"])
                 {
                     string desc = testCase.ContainsKey("expect_error") ?
                                         String.Format("Audience {0} should give err {1}", testCase["audience_json"].ToString(), testCase["expect_error"].ToString()) :
                                         String.Format("Audience {0} should give {1}", testCase["audience_json"].ToString(), testCase["expect_result"].ToString());
                     //Console.WriteLine(desc);
-
 
                     SymplifyAudience audience = new SymplifyAudience(testCase["audience_json"]);
                     var expectation = testCase["expect_result"] ?? testCase["expect_error"];
@@ -98,7 +96,6 @@ namespace Symplify.Conversion.SDK.Tests
                 Console.WriteLine(j["suite_name"]);
                 foreach (dynamic testCase in j["test_cases"])
                 {
-                    Console.WriteLine(testCase);
                     string desc = testCase.ContainsKey("expect_error") ?
                                         String.Format("Audience {0} should give err {1}", testCase["audience_string"].ToString(), testCase["expect_error"].ToString()) :
                                         String.Format("Audience {0} should give {1}", testCase["audience_string"].ToString(), testCase["expect_result"].ToString());
@@ -110,7 +107,6 @@ namespace Symplify.Conversion.SDK.Tests
                     }
                     catch (Exception e)
                     {
-                        Console.WriteLine(e.Message);
                         Assert.Contains(testCase["expect_error"].ToString(), e.Message);
                     }
 
@@ -131,7 +127,7 @@ namespace Symplify.Conversion.SDK.Tests
                 SymplifyAudience audience = new SymplifyAudience(j["rules"]);
                 var actualResult = audience.Trace(j["attributes"]);
                 string actualResultJson = JsonConvert.SerializeObject(actualResult, Formatting.Indented);
-                Console.WriteLine(actualResultJson);
+          
                 Assert.Equal(j["expect_trace"].ToString(), actualResultJson);
             }
         }

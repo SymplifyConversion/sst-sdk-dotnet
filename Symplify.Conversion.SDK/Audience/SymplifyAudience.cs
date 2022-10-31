@@ -46,7 +46,6 @@ namespace Symplify.Conversion.SDK.Audience
         /// </summary>
         public SymplifyAudience(dynamic rules)
         {
-            Console.WriteLine(rules);
             if (rules is JValue)
             {
                 try

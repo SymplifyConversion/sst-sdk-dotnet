@@ -4,6 +4,7 @@ using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace Symplify.Conversion.SDK.Allocation.Config
 {
@@ -12,6 +13,27 @@ namespace Symplify.Conversion.SDK.Allocation.Config
     /// </summary>
     public class SymplifyConfig
     {
+        /// <summary>
+        /// Gets or sets the updated timestamp.
+        /// </summary>
+        [JsonPropertyName("updated")]
+        public long Updated { get; set; }
+
+        /// <summary>
+        /// Gets or sets the site privacy mode.
+        /// </summary>
+        [JsonPropertyName("privacy_mode")]
+        public int Privacy_mode { get; set; }
+        // Hack because serializer dont want to work with the camelCase above.
+        //public int privacy_mode { get; set; }
+
+
+        /// <summary>
+        /// Gets or sets the current projects.
+        /// </summary>
+        [JsonPropertyName("projects")]
+        public List<ProjectConfig> Projects { get; set; }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SymplifyConfig"/> class.
         /// </summary>
@@ -35,20 +57,18 @@ namespace Symplify.Conversion.SDK.Allocation.Config
         {
             try
             {
-                //Newtonsoft.Json.JsonSerializer serializer = new Newtonsoft.Json.JsonSerializer();
-                //JsonTextReader reader = new JsonTextReader(new StringReader(json));
-                //SymplifyConfig config = serializer.Deserialize<SymplifyConfig>(reader);
-                //Console.WriteLine(json);
                 char[] charsToTrim = { '\xEF', ' ', '\xBF', '\xBB' };
-                SymplifyConfig config = System.Text.Json.JsonSerializer.Deserialize<SymplifyConfig>(json.Trim(charsToTrim));
+                json = json.Trim(charsToTrim);
 
+                Newtonsoft.Json.JsonSerializer serializer = new Newtonsoft.Json.JsonSerializer();
+                serializer.NullValueHandling = NullValueHandling.Ignore;
+                serializer.FloatParseHandling = FloatParseHandling.Decimal;
+                JsonTextReader reader = new JsonTextReader(new StringReader(json));
+                SymplifyConfig config = serializer.Deserialize<SymplifyConfig>(reader);
+                
                 Updated = config.Updated;
                 Projects = config.Projects;
-                PrivacyMode = config.PrivacyMode;
-
-                Console.WriteLine("privacyMode: " + config.PrivacyMode);
-
-                Console.WriteLine("updated: " + config.Updated);
+                Privacy_mode = config.Privacy_mode;
             }
             catch (Exception ex)
             {
@@ -65,24 +85,6 @@ namespace Symplify.Conversion.SDK.Allocation.Config
                 throw new ArgumentException("Invalid JSON, missing 'projects' property.");
             }
         }
-
-        /// <summary>
-        /// Gets or sets the updated timestamp.
-        /// </summary>
-        [JsonPropertyName("updated")]
-        public long Updated { get; set; }
-
-        /// <summary>
-        /// Gets or sets the site privacy mode.
-        /// </summary>
-        [JsonPropertyName("privacy_mode")]
-        public uint PrivacyMode { get; set; }
-
-        /// <summary>
-        /// Gets or sets the current projects.
-        /// </summary>
-        [JsonPropertyName("projects")]
-        public List<ProjectConfig> Projects { get; set; }
 
         /// <summary>
         /// Returns the project with the given name, or null if there is no match.
