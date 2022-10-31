@@ -1,7 +1,9 @@
 using System;
 using System.IO;
-using System.Net;
+using System.Net.Http;
+using System.Security.Policy;
 using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Symplify.Conversion.SDK.Audience;
@@ -23,24 +25,29 @@ namespace Symplify.Conversion.SDK.Tests
 
     public class AudienceTest
     {
-
-        private dynamic getData(string path)
+        public static async Task<string> DownloadString(string url)
         {
-            WebClient client = new WebClient();
-            string reply = client.DownloadString(path);
+            var client = new HttpClient();
+            var data = await client.GetStringAsync(url);
 
+            return data;
+        }
+
+        private async Task<dynamic> getData(string path)
+        {
+            string json = await DownloadString(path);
 
             JsonSerializer serializer = new JsonSerializer();
             serializer.NullValueHandling = NullValueHandling.Ignore;
-            JsonTextReader reader = new JsonTextReader(new StringReader(reply));
+            JsonTextReader reader = new JsonTextReader(new StringReader(json));
             return serializer.Deserialize<dynamic>(reader);
 
         }
 
         [Fact]
-        public void TestAudienceAttributes()
+        public async void TestAudienceAttributes()
         {
-            dynamic jsonObject = getData("https://raw.githubusercontent.com/SymplifyConversion/sst-documentation/main/test/audience_attributes_spec.json");
+            dynamic jsonObject = await getData("https://raw.githubusercontent.com/SymplifyConversion/sst-documentation/main/test/audience_attributes_spec.json");
 
             foreach (dynamic j in jsonObject)
             {
@@ -59,9 +66,9 @@ namespace Symplify.Conversion.SDK.Tests
         }
 
         [Fact]
-        public void TestAudience()
+        public async void TestAudience()
         {
-            dynamic jsonObject = getData("https://raw.githubusercontent.com/SymplifyConversion/sst-documentation/main/test/audience_spec.json");
+            dynamic jsonObject = await getData("https://raw.githubusercontent.com/SymplifyConversion/sst-documentation/main/test/audience_spec.json");
 
             foreach (dynamic j in jsonObject)
             {
@@ -81,9 +88,9 @@ namespace Symplify.Conversion.SDK.Tests
         }
 
         [Fact]
-        public void TestAudienceValidation()
+        public async void TestAudienceValidation()
         {
-            dynamic jsonObject = getData("https://raw.githubusercontent.com/SymplifyConversion/sst-documentation/main/test/audience_validation_spec.json");
+            dynamic jsonObject = await getData("https://raw.githubusercontent.com/SymplifyConversion/sst-documentation/main/test/audience_validation_spec.json");
 
             foreach (dynamic j in jsonObject)
             {
@@ -110,9 +117,9 @@ namespace Symplify.Conversion.SDK.Tests
 
 
         [Fact]
-        public void TestAudienceTracing()
+        public async void TestAudienceTracing()
         {
-            dynamic jsonObject = getData("https://raw.githubusercontent.com/SymplifyConversion/sst-documentation/main/test/audience_tracing_spec.json");
+            dynamic jsonObject = await getData("https://raw.githubusercontent.com/SymplifyConversion/sst-documentation/main/test/audience_tracing_spec.json");
 
             foreach (var j in jsonObject)
             {
