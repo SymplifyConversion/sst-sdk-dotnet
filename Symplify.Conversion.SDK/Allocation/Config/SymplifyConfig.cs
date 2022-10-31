@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace Symplify.Conversion.SDK.Allocation.Config
 {
@@ -33,12 +35,20 @@ namespace Symplify.Conversion.SDK.Allocation.Config
         {
             try
             {
+                //Newtonsoft.Json.JsonSerializer serializer = new Newtonsoft.Json.JsonSerializer();
+                //JsonTextReader reader = new JsonTextReader(new StringReader(json));
+                //SymplifyConfig config = serializer.Deserialize<SymplifyConfig>(reader);
+                //Console.WriteLine(json);
                 char[] charsToTrim = { '\xEF', ' ', '\xBF', '\xBB' };
-                SymplifyConfig config = JsonSerializer.Deserialize<SymplifyConfig>(json.Trim(charsToTrim));
+                SymplifyConfig config = System.Text.Json.JsonSerializer.Deserialize<SymplifyConfig>(json.Trim(charsToTrim));
 
                 Updated = config.Updated;
                 Projects = config.Projects;
                 PrivacyMode = config.PrivacyMode;
+
+                Console.WriteLine("privacyMode: " + config.PrivacyMode);
+
+                Console.WriteLine("updated: " + config.Updated);
             }
             catch (Exception ex)
             {

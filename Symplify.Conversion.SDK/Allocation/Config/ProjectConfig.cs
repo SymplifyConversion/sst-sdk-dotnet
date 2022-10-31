@@ -1,5 +1,7 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
+using Newtonsoft.Json.Linq;
 
 namespace Symplify.Conversion.SDK.Allocation.Config
 {
@@ -11,11 +13,12 @@ namespace Symplify.Conversion.SDK.Allocation.Config
         /// <summary>
         /// Initializes a new instance of the <see cref="ProjectConfig"/> class.
         /// </summary>
-        public ProjectConfig(long id, string name, List<VariationConfig> variations)
+        public ProjectConfig(long id, string name, List<VariationConfig> variations, List<dynamic> audienceRules = null)
         {
             ID = id;
             Name = name;
             Variations = variations;
+            AudienceRules = audienceRules ?? new List<dynamic>();
         }
 
         /// <summary>
@@ -42,10 +45,17 @@ namespace Symplify.Conversion.SDK.Allocation.Config
         [JsonPropertyName("variations")]
         public List<VariationConfig> Variations { get; set; }
 
+
         /// <summary>
-        /// Returns the variation with the given ID, or null if there is no match.
+        /// Gets or sets the audience rules for the project.
         /// </summary>
-        public VariationConfig FindVariationWithId(long variationId)
+        [JsonPropertyName("audience_rules")]
+        public List<dynamic> AudienceRules { get; set; }
+
+    /// <summary>
+    /// Returns the variation with the given ID, or null if there is no match.
+    /// </summary>
+    public VariationConfig FindVariationWithId(long variationId)
         {
             foreach (VariationConfig variation in this.Variations)
             {

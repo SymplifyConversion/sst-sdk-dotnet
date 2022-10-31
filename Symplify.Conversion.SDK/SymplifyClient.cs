@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using Symplify.Conversion.SDK.Allocation.Config;
+using Symplify.Conversion.SDK.Audience;
 using Symplify.Conversion.SDK.Cookies;
 
 namespace Symplify.Conversion.SDK
@@ -23,6 +24,11 @@ namespace Symplify.Conversion.SDK
         private readonly int configUpdateIntervalMillis = 10000;
         private readonly HttpClient httpClient;
         private Timer timerHandle;
+
+        // TODO We should be able to use Microsoft.Extensions.Logging, it works on .NET Core
+        private ILogger Logger { get; set; }
+
+        private SymplifyConfig Config { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SymplifyClient"/> class.
@@ -59,11 +65,6 @@ namespace Symplify.Conversion.SDK
 
             configUpdateIntervalMillis = configUpdateInterval * 1000;
         }
-
-        // TODO We should be able to use Microsoft.Extensions.Logging, it works on .NET Core
-        private ILogger Logger { get; set; }
-
-        private SymplifyConfig Config { get; set; }
 
         /// <summary>
         /// Download and use the latest version of the test configuration, await the update.
@@ -117,8 +118,9 @@ namespace Symplify.Conversion.SDK
         /// <summary>
         /// Returns the name of the variation the visitor is part of in the project with the given name, or null if the visitor was not allocated.
         /// </summary>
-        public string FindVariation(string projectName, ICookieJar cookieJar)
+        public string FindVariation(string projectName, ICookieJar cookieJar, dynamic customAttributes = null)
         {
+            // TODO preview??
             if (Config == null)
             {
                 Logger.Log(LogLevel.ERROR, "findVariation called before config is available");
@@ -162,6 +164,16 @@ namespace Symplify.Conversion.SDK
                     // if we don't have any persisted allocation status, that
                     // means we continue below to get one!
                     break;
+            }
+
+            if (project.AudienceRules.Count != 0)
+            {
+                Console.WriteLine("HJ");
+                var audience = new SymplifyAudience(project.AudienceRules);
+
+                if (!doesAudienceApply(audience, customAttributes)) {
+                    return null;
+                }
             }
 
             string visitorId = Visitor.EnsureVisitorID(sympCookie);
@@ -225,6 +237,18 @@ namespace Symplify.Conversion.SDK
                 Logger.Log(LogLevel.ERROR, "Could not download " + url);
                 return null;
             }
+        }
+
+        private bool? doesAudienceApply(SymplifyAudience audience, dynamic audienceAttributes)
+        {
+            var audienceEval = audience.Eval(audienceAttributes);
+
+            if (audienceEval is string)
+            {
+                return null;
+            }
+
+            return audienceEval;
         }
     }
 }
