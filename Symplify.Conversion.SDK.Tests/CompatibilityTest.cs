@@ -8,9 +8,7 @@ using System.Net;
 using System.Net.Http;
 using Newtonsoft.Json.Linq;
 using RichardSzalay.MockHttp;
-
 using Symplify.Conversion.SDK.Cookies;
-using Newtonsoft.Json;
 
 namespace Symplify.Conversion.SDK.Tests
 {
@@ -21,7 +19,7 @@ namespace Symplify.Conversion.SDK.Tests
         public string SDKConfig { get; set; }
         public string WebsiteID { get; set; }
         public string TestProjectName { get; set; }
-        public string? ExpectVariationMatch { get; set; }
+        public string ExpectVariationMatch { get; set; }
         public Dictionary<string, string> Cookies { get; set; }
         public JObject ExpectSgCookiePropertiesMatch { get; set; }
         public dynamic AudienceAttributes { get; set; }
