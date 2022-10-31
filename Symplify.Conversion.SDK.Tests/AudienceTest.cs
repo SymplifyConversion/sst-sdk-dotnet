@@ -1,15 +1,9 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq.Expressions;
 using System.Net;
-using System.Security.Cryptography;
 using System.Text.Json.Serialization;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
-using Symplify.Conversion.SDK.Allocation.Config;
 using Symplify.Conversion.SDK.Audience;
 using Xunit;
 
@@ -113,7 +107,7 @@ namespace Symplify.Conversion.SDK.Tests
                 }
             }
         }
-       
+
 
         [Fact]
         public void TestAudienceTracing()
@@ -127,7 +121,6 @@ namespace Symplify.Conversion.SDK.Tests
                 SymplifyAudience audience = new SymplifyAudience(j["rules"]);
                 var actualResult = audience.Trace(j["attributes"]);
                 string actualResultJson = JsonConvert.SerializeObject(actualResult, Formatting.Indented);
-          
                 Assert.Equal(j["expect_trace"].ToString(), actualResultJson);
             }
         }

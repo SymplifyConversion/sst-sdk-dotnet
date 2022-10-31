@@ -1,35 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Linq.Expressions;
-using System.Security.Cryptography;
-using System.Text.Json.Serialization;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace Symplify.Conversion.SDK.Audience
 {
-    /**
- * Evaluating rules can yield a runtime error.
- */
-    public class RulesEngineError
-    {
-        [JsonPropertyName("message")]
-        public string message;
-
-        public RulesEngineError(string message)
-        {
-            this.message = message;
-        }
-
-        public override string ToString()
-        {
-            return this.message;
-        }
-    }
-
     /// <summary>
     /// SymplifyAudience contains rules to be evaluated for activating projects.
     /// </summary>
@@ -52,27 +27,33 @@ namespace Symplify.Conversion.SDK.Audience
                 {
                     rules = JsonConvert.DeserializeObject(rules.Value);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
-                    throw new Exception(string.Format("rules syntax error at {0}", rules));
+                    throw new InvalidOperationException(string.Format("rules syntax error at {0}", rules));
                 }
 
                 if (!(rules is JArray))
                 {
-                    throw new Exception("AST root must be a list");
+                    throw new InvalidOperationException("AST root must be a list");
                 }
             }
 
-            RulesEngine.Parse(rules, Primitives.PrimativesList);
+            RulesEngine.Parse(rules, Primitives.PrimitivesList);
 
             this.rules = rules;
         }
 
+        /// <summary>
+        /// Gets the property Rules.
+        /// </summary>
         public JArray Rules
         {
             get { return rules; }
         }
 
+        /// <summary>
+        /// Eval interprets the rules in the given environment, and returns true if the audience matches.
+        /// </summary>
         public dynamic Eval(dynamic environment)
         {
             dynamic result;
@@ -106,7 +87,8 @@ namespace Symplify.Conversion.SDK.Audience
             {
                 result = RulesEngine.TraceEvaluate(this.Rules, environment);
             }
-            catch (Exception e){
+            catch (Exception e)
+            {
                 return e.Message;
             }
 

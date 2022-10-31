@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Collections.ObjectModel;
 using System.Linq;
-using System.Runtime.ConstrainedExecution;
 using System.Text.RegularExpressions;
-using System.Xml.Linq;
 
 using Newtonsoft.Json.Linq;
 
@@ -14,9 +11,10 @@ namespace Symplify.Conversion.SDK.Audience
     /// <summary>
     /// This class contains the logic for evaluating each of the primitives in audience rules.
     /// </summary>
-    public class Primitives
+    public static class Primitives
     {
-        public static List<string> PrimativesList = new List<string>
+        private static readonly ReadOnlyCollection<string> PrivatePrimitivesList = new ReadOnlyCollection<string>(
+            new List<string>
         {
         "not",
         "all",
@@ -33,13 +31,24 @@ namespace Symplify.Conversion.SDK.Audience
         "number-attribute",
         "string-attribute",
         "bool-attribute",
-        };
+        });
 
+        /// <summary>
+        /// Gets the list of all the accepted primitives.
+        /// </summary>
+        public static ReadOnlyCollection<string> PrimitivesList
+        {
+            get { return PrivatePrimitivesList; }
+        }
+
+        /// <summary>
+        /// Validation functions for the primitives.
+        /// </summary>
         public static dynamic PrimitiveFunction(string primitive, List<dynamic> args, JObject environment, bool isTrace = false)
         {
-            if (!PrimativesList.Contains(primitive))
+            if (!PrimitivesList.Contains(primitive))
             {
-                throw new Exception(string.Format("Primitive {0} is not a valid primitive. Available primitives are: {1}", primitive, primitive.ToString()));
+                throw new InvalidOperationException(FormattableString.Invariant($"Primitive {primitive} is not a valid primitive. Available primitives are: {PrimitivesList}"));
             }
 
             switch (primitive)
@@ -60,7 +69,7 @@ namespace Symplify.Conversion.SDK.Audience
                             return IsError(string.Format("{0} is not a boolean", arg), isTrace);
                         }
 
-                        if (arg == true)
+                        if (arg)
                         {
                             return true;
                         }
@@ -89,7 +98,9 @@ namespace Symplify.Conversion.SDK.Audience
                     return StringFun(args[0], args[1], equals);
 
                 case "contains":
+#pragma warning disable CA1310
                     Func<string, string, dynamic> contains = (a, b) => { return a.IndexOf(b) != -1; };
+#pragma warning disable CA1310
                     return StringFun(args[0], args[1], contains);
 
                 case "matches":
@@ -134,13 +145,16 @@ namespace Symplify.Conversion.SDK.Audience
                     return GetInEnvBool(args[0], environment, isTrace);
 
                 default:
-                    throw new Exception(string.Format("Primitive '{0}' is not an implemented primitive.", primitive));
+                    throw new InvalidOperationException(FormattableString.Invariant($"Primitive '{primitive}' is not an implemented primitive."));
             }
         }
 
+        /// <summary>
+        /// Check if the value is a number.
+        /// </summary>
         public static bool IsNumeric(dynamic value)
         {
-            if (value is Int64 || value is long || value is float || value is int)
+            if (value is long || value is float || value is int)
             {
                 return true;
             }
@@ -224,7 +238,7 @@ namespace Symplify.Conversion.SDK.Audience
                 return new RulesEngineError(message);
             }
 
-            throw new Exception(message);
+            throw new InvalidOperationException(message);
         }
     }
 }

@@ -1,6 +1,6 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
+
 using Newtonsoft.Json.Linq;
 
 namespace Symplify.Conversion.SDK.Allocation.Config
@@ -45,17 +45,18 @@ namespace Symplify.Conversion.SDK.Allocation.Config
         [JsonPropertyName("variations")]
         public List<VariationConfig> Variations { get; set; }
 
-
+#pragma warning disable CA1707
         /// <summary>
         /// Gets or sets the audience rules for the project.
         /// </summary>
         [JsonPropertyName("audience_rules")]
         public JArray Audience_rules { get; set; }
+#pragma warning disable CA1707
 
-    /// <summary>
-    /// Returns the variation with the given ID, or null if there is no match.
-    /// </summary>
-    public VariationConfig FindVariationWithId(long variationId)
+        /// <summary>
+        /// Returns the variation with the given ID, or null if there is no match.
+        /// </summary>
+        public VariationConfig FindVariationWithId(long variationId)
         {
             foreach (VariationConfig variation in this.Variations)
             {

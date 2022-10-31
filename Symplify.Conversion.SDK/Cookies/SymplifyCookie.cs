@@ -201,6 +201,42 @@ namespace Symplify.Conversion.SDK.Cookies
             return new List<long>();
         }
 
+        /// <summary>
+        /// returns the preview data if one exists otherwise an empty dict.
+        /// </summary>
+        public Dictionary<string, int> GetPreviewData()
+        {
+            var websiteData = GetWebsiteData();
+            JToken projectId = websiteData[CookiePreviewProjectKey];
+
+            if (projectId == null)
+            {
+                return new Dictionary<string, int>();
+            }
+
+            if (projectId.Type != JTokenType.Integer)
+            {
+                return new Dictionary<string, int>();
+            }
+
+            JToken variationId = websiteData[CookiePreviewVariationKey];
+            if (variationId == null)
+            {
+                return new Dictionary<string, int>();
+            }
+
+            if (variationId.Type != JTokenType.Integer)
+            {
+                return new Dictionary<string, int>();
+            }
+
+            return new Dictionary<string, int>
+            {
+                { "projectId", (int)projectId },
+                { "variationId", (int)variationId },
+            };
+        }
+
         private JObject GetWebsiteData()
         {
             if (!jobj.ContainsKey(currentWebsiteID))
@@ -231,39 +267,6 @@ namespace Symplify.Conversion.SDK.Cookies
             }
 
             allocatedProjects.Add(projectID);
-        }
-
-        public Dictionary<string, int> GetPreviewData()
-        {
-            var websiteData = GetWebsiteData();
-            JToken projectId = websiteData[CookiePreviewProjectKey];
-
-            if (projectId == null)
-            {
-                return null;
-            }
-
-            if (projectId.Type != JTokenType.Integer)
-            {
-                return null;
-            }
-
-            JToken variationId = websiteData[CookiePreviewVariationKey];
-            if (variationId == null)
-            {
-                return null;
-            }
-            if (variationId.Type != JTokenType.Integer)
-            {
-                return null;
-            }
-
-            return new Dictionary<string, int>
-            {
-                { "projectId", (int)projectId },
-                { "variationId", (int)variationId}
-
-            };
         }
     }
 }

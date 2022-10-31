@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+
 using Newtonsoft.Json;
 using Symplify.Conversion.SDK.Allocation.Config;
 using Symplify.Conversion.SDK.Audience;
@@ -26,11 +26,12 @@ namespace Symplify.Conversion.SDK
         private readonly HttpClient httpClient;
         private Timer timerHandle;
 
+        private SymplifyConfig Config { get; set; }
+
         // TODO We should be able to use Microsoft.Extensions.Logging, it works on .NET Core
         private ILogger Logger { get; set; }
 
-        private SymplifyConfig Config { get; set; }
-
+#pragma warning disable SA1201
         /// <summary>
         /// Initializes a new instance of the <see cref="SymplifyClient"/> class.
         /// </summary>
@@ -38,6 +39,7 @@ namespace Symplify.Conversion.SDK
         : this(new ClientConfig(websiteID), httpClient, new DefaultLogger())
         {
         }
+#pragma warning disable SA1201
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SymplifyClient"/> class.
@@ -153,7 +155,7 @@ namespace Symplify.Conversion.SDK
                 return null;
             }
 
-            if (sympCookie.GetPreviewData() != null)
+            if (sympCookie.GetPreviewData().Count > 0)
             {
                 return HandlePreview(sympCookie, project, cookieJar, customAttributes);
             }
@@ -174,10 +176,10 @@ namespace Symplify.Conversion.SDK
 
             if (project.Audience_rules.Count != 0)
             {
-
                 var audience = new SymplifyAudience(project.Audience_rules);
 
-                if (!doesAudienceApply(audience, customAttributes)) {
+                if (!DoesAudienceApply(audience, customAttributes))
+                {
                     return null;
                 }
             }
@@ -199,6 +201,26 @@ namespace Symplify.Conversion.SDK
             return variation?.Name;
         }
 
+        /// <summary>
+        /// Get the URL to the SST config file.
+        /// </summary>
+        public string GetConfigURL()
+        {
+            return string.Format(CultureInfo.InvariantCulture, "{0}/{1}/sstConfig.json", cdnBaseURL, currentWebsiteID);
+        }
+
+        private static bool? DoesAudienceApply(SymplifyAudience audience, dynamic audienceAttributes)
+        {
+            var audienceEval = audience.Eval(audienceAttributes);
+
+            if (audienceEval is string)
+            {
+                return null;
+            }
+
+            return audienceEval;
+        }
+
         private string HandlePreview(SymplifyCookie sympCookie, ProjectConfig project, ICookieJar cookieJar, dynamic customAttributes)
         {
             if (project.Audience_rules.Count > 0)
@@ -214,11 +236,11 @@ namespace Symplify.Conversion.SDK
 
                 cookieJar.SetCookie("sg_audience_trace", JsonConvert.SerializeObject(audienceTrace), 1);
 
-                if (!doesAudienceApply(audience, customAttributes)){
+                if (!DoesAudienceApply(audience, customAttributes))
+                {
                     return null;
                 }
             }
-            
 
             VariationConfig variation = null;
             if (sympCookie.GetPreviewData().ContainsKey("variationId"))
@@ -227,20 +249,13 @@ namespace Symplify.Conversion.SDK
                 variation = project.FindVariationWithId(variationId);
             }
 
-            if (variation != null) {
+            if (variation != null)
+            {
                 sympCookie.SetAllocatedVariationID(project.ID, variation.ID);
                 cookieJar.SetCookie(SymplifyCookie.CookieName, sympCookie.ToJSON(), 90);
             }
 
             return variation.Name ?? null;
-        }
-
-        /// <summary>
-        /// Get the URL to the SST config file.
-        /// </summary>
-        public string GetConfigURL()
-        {
-            return string.Format(CultureInfo.InvariantCulture, "{0}/{1}/sstConfig.json", cdnBaseURL, currentWebsiteID);
         }
 
         private async Task<SymplifyConfig> FetchConfig()
@@ -279,18 +294,6 @@ namespace Symplify.Conversion.SDK
                 Logger.Log(LogLevel.ERROR, "Could not download " + url);
                 return null;
             }
-        }
-
-        private bool? doesAudienceApply(SymplifyAudience audience, dynamic audienceAttributes)
-        {
-            var audienceEval = audience.Eval(audienceAttributes);
-
-            if (audienceEval is string)
-            {
-                return null;
-            }
-
-            return audienceEval;
         }
     }
 }
