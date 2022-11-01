@@ -98,6 +98,46 @@ If you run test on a site with multiple subdomains, you will need to use a
 common "parent" domain for the cookies, such as `".example.com"` for e.g.
 `"b2b.example.com"` and `"store.example.com"`.
 
+### Custom audience
+
+It's possible to limit for which requests/visitors a certain test project
+should apply by using "audience" rules. See [Audiences.md](https://github.com/SymplifyConversion/sst-documentation/blob/main/docs/Audicences.md)
+for details.
+
+The audience is evaluated when your server calls `findVariation`, and if the
+rules you have setup in the audience references "custom attributes" your
+server must provide the values of these attributes for each request.
+
+For example, you might want a test project to only apply for visitors from a
+certain country. The audience can be configured in your project, using a
+custom attribute "country", and then your server provides it when finding the
+variation on each request:
+
+```csharp
+    // fictional helper function to get discounts for each request we serve
+   public double[] getDiscounts(Client sdk, ICookieJar cookieJar)
+    {
+        // This code assumes you have a `LookupGeoIP` helper function in your project.
+        JArray customAttributes = JArray.Parse($"[{{'country': '{LookupGeoIp(usersIPAddress).GetCountry()}'}}]");
+        
+        // Custom attributes are passed as an JArray, in this case we set 'country'
+        // and assume the audience is configured with the "string-attribute" rule to look for specific countries.
+        string variation = sdk.FindVariation("Discounts, May 2022", cookieJar, customAttributes);
+
+        switch (variation)
+        {
+            case "huge":
+                return new double[1] { 0.25 };
+            case "small":
+                return new double[1] { 0.1 };
+        }
+
+        // `findVariation` returns empty array if the project audience does not match for
+        // a given request. We handle that by a fallthrough return here.
+        return new double[1];
+    }
+```
+
 ## SDK Development
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) or [RELEASING.md](RELEASING.md).
