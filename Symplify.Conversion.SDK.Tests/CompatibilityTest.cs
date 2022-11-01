@@ -9,6 +9,8 @@ using System.Net.Http;
 using Newtonsoft.Json.Linq;
 using RichardSzalay.MockHttp;
 using Symplify.Conversion.SDK.Cookies;
+using System.Threading.Tasks;
+using System.Security.Policy;
 
 namespace Symplify.Conversion.SDK.Tests
 {
@@ -48,10 +50,17 @@ namespace Symplify.Conversion.SDK.Tests
             return mockHttp.ToHttpClient();
         }
 
-        public static IEnumerable<object[]> CompatibilityTestData()
+        public static async Task<string> DownloadString(string url)
         {
-            WebClient client = new WebClient();
-            var json = client.DownloadString("https://raw.githubusercontent.com/SymplifyConversion/sst-documentation/main/test/test_cases.json");
+            var client = new HttpClient();
+            var data = await client.GetStringAsync(url);
+
+            return data;
+        }
+
+        public static async Task<List<CompatibilityTestCase>> CompatibilityTestData()
+        {
+            var json = await DownloadString("https://raw.githubusercontent.com/SymplifyConversion/sst-documentation/main/test/test_cases.json");
 
             var testCases = JArray.Parse(json).Select(c => new CompatibilityTestCase
             {
@@ -66,17 +75,7 @@ namespace Symplify.Conversion.SDK.Tests
                 AudienceAttributes = c["audience_attributes"],
             }).ToList();
 
-            foreach (var test in testCases)
-            {
-                yield return new[] { test };
-            }
-        }
-
-        static string ReadConfig(string filename)
-        {
-            WebClient client = new WebClient();
-            var json = client.DownloadString(String.Format("https://raw.githubusercontent.com/SymplifyConversion/sst-documentation/main/test/{0}", filename));
-            return json;
+            return testCases;
         }
 
         static void AssertMatchOrBothNull(string expected, string actual)
@@ -91,70 +90,73 @@ namespace Symplify.Conversion.SDK.Tests
             }
         }
 
-        [Theory]
-        [MemberData(nameof(CompatibilityTestData))]
-        async public void SDKIsCompatible(CompatibilityTestCase test)
+        [Fact]
+        async void SDKIsCompatible()
         {
-            // HACK but we need xunit v3 before we can skip tests dynamically.
-            if (test.Skip != null)
+            List<CompatibilityTestCase> tests = await CompatibilityTestData();
+            foreach (CompatibilityTestCase test in tests)
             {
-                Assert.Equal(test.Skip, test.Skip);
-                return;
-            }
-
-            // prepare the client data
-            var sdkConfig = ReadConfig(test.SDKConfig);
-            ClientConfig cfg = new ClientConfig(test.WebsiteID, "https://cdn.example.com");
-            SymplifyClient client = new SymplifyClient(cfg, fakeHttpClient(sdkConfig), new DefaultLogger());
-            await client.LoadConfig();
-
-            // prepare the per request data
-            RawCookieJar cookieJar = new RawCookieJar();
-            Dictionary<string, string> testCookies = test?.Cookies ?? new Dictionary<string, string>();
-            foreach (var cookie in testCookies)
-            {
-                // the test data has encoded cookies, but our raw cookie jar for tests doesn't have any codec
-                cookieJar.SetCookie(cookie.Key, WebUtility.UrlDecode(cookie.Value), 99);
-            }
-
-            // simulate the request
-            var variation = client.FindVariation(test.TestProjectName, cookieJar, test.AudienceAttributes);
-
-            // verify the allocated variation
-            AssertMatchOrBothNull(test.ExpectVariationMatch, variation);
-
-            if (test.ExpectSgCookiePropertiesMatch == null)
-            {
-                return;
-            }
-
-            // verify cookie afterwards
-            foreach (var expect in test?.ExpectSgCookiePropertiesMatch?.Properties())
-            {
-                // get the root object first
-                var node = JObject.Parse(WebUtility.UrlDecode(cookieJar.GetCookie(SymplifyCookie.CookieName) ?? "{}")).Root;
-                foreach (var part in expect.Name.Split('/'))
+                // HACK but we need xunit v3 before we can skip tests dynamically.
+                if (test.Skip != null)
                 {
-                    // traverse to an expected leaf
-                    if (!(node is JObject))
+                    Assert.Equal(test.Skip, test.Skip);
+                    return;
+                }
+
+
+                // prepare the client data
+                var sdkConfig = await DownloadString(String.Format("https://raw.githubusercontent.com/SymplifyConversion/sst-documentation/main/test/{0}", test.SDKConfig));
+                ClientConfig cfg = new ClientConfig(test.WebsiteID, "https://cdn.example.com");
+                SymplifyClient client = new SymplifyClient(cfg, fakeHttpClient(sdkConfig), new DefaultLogger());
+                await client.LoadConfig();
+
+                // prepare the per request data
+                RawCookieJar cookieJar = new RawCookieJar();
+                Dictionary<string, string> testCookies = test?.Cookies ?? new Dictionary<string, string>();
+                foreach (var cookie in testCookies)
+                {
+                    // the test data has encoded cookies, but our raw cookie jar for tests doesn't have any codec
+                    cookieJar.SetCookie(cookie.Key, WebUtility.UrlDecode(cookie.Value), 99);
+                }
+
+                // simulate the request
+                var variation = client.FindVariation(test.TestProjectName, cookieJar, test.AudienceAttributes);
+
+                // verify the allocated variation
+                AssertMatchOrBothNull(test.ExpectVariationMatch, variation);
+                if (test.ExpectSgCookiePropertiesMatch == null)
+                {
+                    return;
+                }
+
+                // verify cookie afterwards
+                foreach (var expect in test?.ExpectSgCookiePropertiesMatch?.Properties())
+                {
+                    // get the root object first
+                    var node = JObject.Parse(WebUtility.UrlDecode(cookieJar.GetCookie(SymplifyCookie.CookieName) ?? "{}")).Root;
+                    foreach (var part in expect.Name.Split('/'))
                     {
-                        break;
+                        // traverse to an expected leaf
+                        if (!(node is JObject))
+                        {
+                            break;
+                        }
+                        node = node[part];
                     }
-                    node = node[part];
-                }
 
-                // verify the expected leaf value
-                if (expect.Value.Type == JTokenType.String)
-                {
-                    AssertMatchOrBothNull((string)expect.Value, (string)node);
-                }
-                else if (expect.Value.Type == JTokenType.Null)
-                {
-                    Assert.Null(node);
-                }
-                else
-                {
-                    Assert.Equal(expect.Value, node);
+                    // verify the expected leaf value
+                    if (expect.Value.Type == JTokenType.String)
+                    {
+                        AssertMatchOrBothNull((string)expect.Value, (string)node);
+                    }
+                    else if (expect.Value.Type == JTokenType.Null)
+                    {
+                        Assert.Null(node);
+                    }
+                    else
+                    {
+                        Assert.Equal(expect.Value, node);
+                    }
                 }
             }
         }
