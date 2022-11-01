@@ -29,12 +29,7 @@
     <None Remove="System.Web.Extensions" />
     <None Remove="Microsoft.CSharp" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="data\sdk_config.json" CopyToOutputDirectory="PreserveNewest" />
-    <None Include="data\sdk_config_privacy2.json" CopyToOutputDirectory="PreserveNewest" />
-    <None Include="data\test_cases.json" CopyToOutputDirectory="PreserveNewest" />
-  </ItemGroup>
-
+  
   <ItemGroup Condition=" '$(TargetFramework)' == 'net47' ">
     <PackageReference Include="xunit.runner.console" Version="2.4.2">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
