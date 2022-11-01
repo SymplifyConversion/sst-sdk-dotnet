@@ -1,4 +1,6 @@
+using System.IO;
 using System.Text.Json;
+using Newtonsoft.Json;
 using Symplify.Conversion.SDK.Allocation.Config;
 using Xunit;
 
@@ -103,7 +105,12 @@ namespace Symplify.Conversion.SDK.Tests
 
         public FindVariationForVisitorTests()
         {
-            SymplifyConfig config = JsonSerializer.Deserialize<SymplifyConfig>(ALLOCATION_TEST_PROJECT_JSON);
+
+            Newtonsoft.Json.JsonSerializer serializer = new Newtonsoft.Json.JsonSerializer();
+            serializer.NullValueHandling = NullValueHandling.Ignore;
+            JsonTextReader reader = new JsonTextReader(new StringReader(ALLOCATION_TEST_PROJECT_JSON));
+            SymplifyConfig config = serializer.Deserialize<SymplifyConfig>(reader);
+
             projectConfig = config.Projects[0];
             projectConfigWithManyVariations = config.Projects[1];
         }

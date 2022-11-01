@@ -32,17 +32,20 @@
     <None Include="../CHANGELOG.md" Pack="true" PackagePath="" />
     <None Include="../LICENSE" Pack="true" PackagePath="" />
     <None Include="../README.md" Pack="true" PackagePath="" />
+    <None Remove="Audience\" />
+    <None Remove="Microsoft.CSharp" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Allocation\" />
     <Folder Include="Cookies\" />
     <AdditionalFiles Include="stylecop.json" />
+    <Folder Include="Audience\" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="SonarAnalyzer.CSharp" Version="8.40.0.48530">
+    <PackageReference Include="SonarAnalyzer.CSharp" Version="8.47.0.55603">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
@@ -58,6 +61,9 @@
   -->
   <ItemGroup Condition=" '$(TargetFramework)' == 'net47' ">
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
-    <PackageReference Include="System.Text.Json" Version="6.0.5" />
+    <PackageReference Include="System.Text.Json" Version="6.0.6" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
 </Project>

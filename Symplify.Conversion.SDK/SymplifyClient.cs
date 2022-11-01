@@ -5,7 +5,9 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Newtonsoft.Json;
 using Symplify.Conversion.SDK.Allocation.Config;
+using Symplify.Conversion.SDK.Audience;
 using Symplify.Conversion.SDK.Cookies;
 
 namespace Symplify.Conversion.SDK
@@ -24,6 +26,12 @@ namespace Symplify.Conversion.SDK
         private readonly HttpClient httpClient;
         private Timer timerHandle;
 
+        private SymplifyConfig Config { get; set; }
+
+        // TODO We should be able to use Microsoft.Extensions.Logging, it works on .NET Core
+        private ILogger Logger { get; set; }
+
+#pragma warning disable SA1201
         /// <summary>
         /// Initializes a new instance of the <see cref="SymplifyClient"/> class.
         /// </summary>
@@ -31,6 +39,7 @@ namespace Symplify.Conversion.SDK
         : this(new ClientConfig(websiteID), httpClient, new DefaultLogger())
         {
         }
+#pragma warning disable SA1201
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SymplifyClient"/> class.
@@ -59,11 +68,6 @@ namespace Symplify.Conversion.SDK
 
             configUpdateIntervalMillis = configUpdateInterval * 1000;
         }
-
-        // TODO We should be able to use Microsoft.Extensions.Logging, it works on .NET Core
-        private ILogger Logger { get; set; }
-
-        private SymplifyConfig Config { get; set; }
 
         /// <summary>
         /// Download and use the latest version of the test configuration, await the update.
@@ -117,15 +121,16 @@ namespace Symplify.Conversion.SDK
         /// <summary>
         /// Returns the name of the variation the visitor is part of in the project with the given name, or null if the visitor was not allocated.
         /// </summary>
-        public string FindVariation(string projectName, ICookieJar cookieJar)
+        public string FindVariation(string projectName, ICookieJar cookieJar, dynamic customAttributes = null)
         {
+            // TODO preview??
             if (Config == null)
             {
                 Logger.Log(LogLevel.ERROR, "findVariation called before config is available");
                 return null;
             }
 
-            if (Config.PrivacyMode == 2 && cookieJar.GetCookie("sg_optin") != "1")
+            if (Config.Privacy_mode == 2 && cookieJar.GetCookie("sg_optin") != "1")
             {
                 return null;
             }
@@ -150,6 +155,11 @@ namespace Symplify.Conversion.SDK
                 return null;
             }
 
+            if (sympCookie.GetPreviewData().Count > 0)
+            {
+                return HandlePreview(sympCookie, project, cookieJar, customAttributes);
+            }
+
             switch (sympCookie.GetProjectAllocationStatus(project.ID))
             {
                 case ProjectAllocationStatus.Allocated:
@@ -162,6 +172,16 @@ namespace Symplify.Conversion.SDK
                     // if we don't have any persisted allocation status, that
                     // means we continue below to get one!
                     break;
+            }
+
+            if (project.Audience_rules.Count != 0)
+            {
+                var audience = new SymplifyAudience(project.Audience_rules);
+
+                if (!DoesAudienceApply(audience, customAttributes))
+                {
+                    return null;
+                }
             }
 
             string visitorId = Visitor.EnsureVisitorID(sympCookie);
@@ -187,6 +207,55 @@ namespace Symplify.Conversion.SDK
         public string GetConfigURL()
         {
             return string.Format(CultureInfo.InvariantCulture, "{0}/{1}/sstConfig.json", cdnBaseURL, currentWebsiteID);
+        }
+
+        private static bool? DoesAudienceApply(SymplifyAudience audience, dynamic audienceAttributes)
+        {
+            var audienceEval = audience.Eval(audienceAttributes);
+
+            if (audienceEval is string)
+            {
+                return null;
+            }
+
+            return audienceEval;
+        }
+
+        private string HandlePreview(SymplifyCookie sympCookie, ProjectConfig project, ICookieJar cookieJar, dynamic customAttributes)
+        {
+            if (project.Audience_rules.Count > 0)
+            {
+                SymplifyAudience audience = new SymplifyAudience(project.Audience_rules);
+
+                dynamic audienceTrace = audience.Trace(customAttributes);
+
+                if (audienceTrace is string)
+                {
+                    return null;
+                }
+
+                cookieJar.SetCookie("sg_audience_trace", JsonConvert.SerializeObject(audienceTrace), 1);
+
+                if (!DoesAudienceApply(audience, customAttributes))
+                {
+                    return null;
+                }
+            }
+
+            VariationConfig variation = null;
+            if (sympCookie.GetPreviewData().ContainsKey("variationId"))
+            {
+                int variationId = sympCookie.GetPreviewData()["variationId"];
+                variation = project.FindVariationWithId(variationId);
+            }
+
+            if (variation != null)
+            {
+                sympCookie.SetAllocatedVariationID(project.ID, variation.ID);
+                cookieJar.SetCookie(SymplifyCookie.CookieName, sympCookie.ToJSON(), 90);
+            }
+
+            return variation.Name ?? null;
         }
 
         private async Task<SymplifyConfig> FetchConfig()

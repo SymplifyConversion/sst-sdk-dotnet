@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text.Json;
+using System.IO;
 using System.Text.Json.Serialization;
+
+using Newtonsoft.Json;
 
 namespace Symplify.Conversion.SDK.Allocation.Config
 {
@@ -34,11 +36,17 @@ namespace Symplify.Conversion.SDK.Allocation.Config
             try
             {
                 char[] charsToTrim = { '\xEF', ' ', '\xBF', '\xBB' };
-                SymplifyConfig config = JsonSerializer.Deserialize<SymplifyConfig>(json.Trim(charsToTrim));
+                json = json.Trim(charsToTrim);
+
+                Newtonsoft.Json.JsonSerializer serializer = new Newtonsoft.Json.JsonSerializer();
+                serializer.NullValueHandling = NullValueHandling.Ignore;
+                serializer.FloatParseHandling = FloatParseHandling.Decimal;
+                JsonTextReader reader = new JsonTextReader(new StringReader(json));
+                SymplifyConfig config = serializer.Deserialize<SymplifyConfig>(reader);
 
                 Updated = config.Updated;
                 Projects = config.Projects;
-                PrivacyMode = config.PrivacyMode;
+                Privacy_mode = config.Privacy_mode;
             }
             catch (Exception ex)
             {
@@ -62,11 +70,13 @@ namespace Symplify.Conversion.SDK.Allocation.Config
         [JsonPropertyName("updated")]
         public long Updated { get; set; }
 
+#pragma warning disable CA1707
         /// <summary>
         /// Gets or sets the site privacy mode.
         /// </summary>
         [JsonPropertyName("privacy_mode")]
-        public uint PrivacyMode { get; set; }
+        public int Privacy_mode { get; set; }
+#pragma warning restore CA1707
 
         /// <summary>
         /// Gets or sets the current projects.

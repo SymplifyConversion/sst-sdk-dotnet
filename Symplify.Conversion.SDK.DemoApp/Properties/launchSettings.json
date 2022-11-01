@@ -1,4 +1,4 @@
-﻿{
+{
   "iisSettings": {
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
@@ -11,7 +11,7 @@
     "Symplify.Conversion.SDK.DemoApp": {
       "commandName": "Project",
       "launchBrowser": true,
-      "applicationUrl": "https://localhost:61264;http://localhost:51694",
+      "applicationUrl": "http://localhost:65056",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

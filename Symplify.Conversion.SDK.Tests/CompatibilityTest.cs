@@ -8,7 +8,6 @@ using System.Net;
 using System.Net.Http;
 using Newtonsoft.Json.Linq;
 using RichardSzalay.MockHttp;
-
 using Symplify.Conversion.SDK.Cookies;
 
 namespace Symplify.Conversion.SDK.Tests
@@ -23,6 +22,7 @@ namespace Symplify.Conversion.SDK.Tests
         public string ExpectVariationMatch { get; set; }
         public Dictionary<string, string> Cookies { get; set; }
         public JObject ExpectSgCookiePropertiesMatch { get; set; }
+        public dynamic AudienceAttributes { get; set; }
 
         override public string ToString()
         {
@@ -50,8 +50,8 @@ namespace Symplify.Conversion.SDK.Tests
 
         public static IEnumerable<object[]> CompatibilityTestData()
         {
-            var filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "data", "test_cases.json");
-            var json = File.ReadAllText(filePath);
+            WebClient client = new WebClient();
+            var json = client.DownloadString("https://raw.githubusercontent.com/SymplifyConversion/sst-documentation/main/test/test_cases.json");
 
             var testCases = JArray.Parse(json).Select(c => new CompatibilityTestCase
             {
@@ -63,6 +63,7 @@ namespace Symplify.Conversion.SDK.Tests
                 ExpectVariationMatch = (string)c["expect_variation_match"],
                 Cookies = c["cookies"]?.ToObject<Dictionary<string, string>>(),
                 ExpectSgCookiePropertiesMatch = c["expect_sg_cookie_properties_match"]?.ToObject<JObject>(),
+                AudienceAttributes = c["audience_attributes"],
             }).ToList();
 
             foreach (var test in testCases)
@@ -73,8 +74,8 @@ namespace Symplify.Conversion.SDK.Tests
 
         static string ReadConfig(string filename)
         {
-            var filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "data", filename);
-            var json = File.ReadAllText(filePath);
+            WebClient client = new WebClient();
+            var json = client.DownloadString(String.Format("https://raw.githubusercontent.com/SymplifyConversion/sst-documentation/main/test/{0}", filename));
             return json;
         }
 
@@ -117,10 +118,15 @@ namespace Symplify.Conversion.SDK.Tests
             }
 
             // simulate the request
-            var variation = client.FindVariation(test.TestProjectName, cookieJar);
+            var variation = client.FindVariation(test.TestProjectName, cookieJar, test.AudienceAttributes);
 
             // verify the allocated variation
             AssertMatchOrBothNull(test.ExpectVariationMatch, variation);
+
+            if (test.ExpectSgCookiePropertiesMatch == null)
+            {
+                return;
+            }
 
             // verify cookie afterwards
             foreach (var expect in test?.ExpectSgCookiePropertiesMatch?.Properties())
