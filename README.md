@@ -11,6 +11,7 @@ See [CHANGELOG.md](CHANGELOG.md).
 
 ## Requirements
 
+- [.NET] Framework 4.7
 - [.NET] 6
 
 [.NET]: https://dotnet.microsoft.com/en-us/download
