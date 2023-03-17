@@ -56,9 +56,9 @@ code. Running instructions for it are in [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ### CookieJar
 
-In order to assign variations stably in face of configuration changes, we need
-to persist the allocation for each user somehow. The SST SDK uses cookies for
-this (which also helps integration with the frontend js-sdk).
+To ensure visitors get the same variation consistently, the SDK needs to
+read and write cookies. See [SST-documentation](https://github.com/SymplifyConversion/sst-documentation/) 
+repository for general cookie setup information.
 
 To be compatible with any web framework, the SDK uses an interface `ICookieJar`
 which you implement to provide reading and writing of cookies. Here is an
