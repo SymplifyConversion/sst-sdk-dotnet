@@ -189,10 +189,13 @@ namespace Symplify.Conversion.SDK.Audience
                     throw new InvalidOperationException(string.Format("message: can only apply strings, {0} is not a string", car));
                 }
 
-                if (!primitives.Contains(car))
+#pragma warning disable IDE0004
+                //this cast is important, trust me! (not sure if other types are expected, though))
+                if (!(primitives as ICollection<string>)?.Contains(car))
                 {
                     throw new InvalidOperationException(string.Format("message: {0} is not a primitive", car));
                 }
+#pragma warning restore IDE0004
 
                 var cdr = ast.AfterSelf();
 
