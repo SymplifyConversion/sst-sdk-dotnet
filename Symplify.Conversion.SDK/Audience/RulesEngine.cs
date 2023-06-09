@@ -190,7 +190,6 @@ namespace Symplify.Conversion.SDK.Audience
                 }
 
 #pragma warning disable IDE0004
-                //this cast is important, trust me! (not sure if other types are expected, though))
                 if (!(primitives as ICollection<string>)?.Contains(car))
                 {
                     throw new InvalidOperationException(string.Format("message: {0} is not a primitive", car));
