@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.3] - 2023-06-09
+
+### Changed
+- Explicit cast IList to ICollection to help the runtime
+
 ## [0.5.2] - 2023-03-20
 
 ### Changed
