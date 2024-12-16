@@ -1,5 +1,4 @@
 using System.IO;
-using System.Text.Json;
 using Newtonsoft.Json;
 using Symplify.Conversion.SDK.Allocation.Config;
 using Xunit;
@@ -20,13 +19,15 @@ namespace Symplify.Conversion.SDK.Tests
                             ""id"": 42,
                             ""name"": ""original"",
                             ""state"": ""active"",
-                            ""weight"": 67
+                            ""weight"": 67,
+                            ""distribution"": 66.66
                         },
                         {
                             ""id"": 1337,
                             ""name"": ""massive"",
                             ""state"": ""active"",
-                            ""weight"":33
+                            ""weight"":33,
+                            ""distribution"": 33.33
                         }
                     ]
                 },
@@ -39,61 +40,71 @@ namespace Symplify.Conversion.SDK.Tests
                             ""id"": 1,
                             ""name"": ""variation1"",
                             ""state"": ""active"",
-                            ""weight"": 10
+                            ""weight"": 10,
+                            ""distribution"": 10
                         },
                         {
                             ""id"": 2,
                             ""name"": ""variation2"",
                             ""state"": ""active"",
-                            ""weight"": 10
+                            ""weight"": 10,
+                            ""distribution"": 10
                         },
                         {
                             ""id"": 3,
                             ""name"": ""variation3"",
                             ""state"": ""active"",
-                            ""weight"": 10
+                            ""weight"": 10,
+                            ""distribution"": 10
                         },
                         {
                             ""id"": 4,
                             ""name"": ""variation4"",
                             ""state"": ""active"",
-                            ""weight"": 10
+                            ""weight"": 10,
+                            ""distribution"": 10
                         },
                         {
                             ""id"": 5,
                             ""name"": ""variation5"",
                             ""state"": ""active"",
-                            ""weight"": 10
+                            ""weight"": 10,
+                            ""distribution"": 10
                         },
                         {
                             ""id"": 6,
                             ""name"": ""variation6"",
                             ""state"": ""active"",
-                            ""weight"": 10
+                            ""weight"": 10,
+                            ""distribution"": 10
                         },
                         {
                             ""id"": 7,
                             ""name"": ""variation7"",
                             ""state"": ""active"",
-                            ""weight"": 10
+                            ""weight"": 10,
+                            ""distribution"": 10
                         },
                         {
                             ""id"": 8,
                             ""name"": ""variation8"",
                             ""state"": ""active"",
-                            ""weight"": 10
+                            ""weight"": 10,
+                            ""distribution"": 10
                         },
                         {
                             ""id"": 9,
                             ""name"": ""variation9"",
                             ""state"": ""active"",
-                            ""weight"": 10
+                            ""weight"": 10,
+                            ""distribution"": 10
                         },
                         {
                             ""id"": 10,
                             ""name"": ""variation10"",
                             ""state"": ""active"",
-                            ""weight"": 10
+                            ""weight"": 10,
+                            ""distribution"": 10
                         }
                     ]
                 }

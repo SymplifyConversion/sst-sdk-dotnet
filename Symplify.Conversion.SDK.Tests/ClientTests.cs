@@ -59,9 +59,9 @@ namespace Symplify.Conversion.SDK.Tests
                         ""id"": 4711,
                         ""name"": ""discount"",
                         ""variations"": [
-                            { ""id"":   42, ""name"": ""original"", ""weight"": 10 },
-                            { ""id"": 1337, ""name"": ""huge""    , ""weight"":  2 },
-                            { ""id"": 9999, ""name"": ""small""   , ""weight"":  1 }
+                            { ""id"":   42, ""name"": ""original"", ""weight"": 10, ""distribution"": 10 },
+                            { ""id"": 1337, ""name"": ""huge""    , ""weight"":  2, ""distribution"": 2 },
+                            { ""id"": 9999, ""name"": ""small""   , ""weight"":  1, ""distribution"": 1 }
                         ]
                     }
             ]}";

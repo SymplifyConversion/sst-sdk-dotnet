@@ -42,19 +42,22 @@ namespace Symplify.Conversion.SDK.Allocation
 
         private static VariationConfig LookupVariationAt(ProjectConfig project, uint allocation)
         {
-            uint totalWeight = 0;
-            List<(uint weight, long id)> variationThresholds = new List<(uint weight, long id)>();
+            double totalWeight = 0;
+            List<(double weight, long id)> variationThresholds = new List<(double weight, long id)>();
 
             foreach (VariationConfig variationConfig in project.Variations)
             {
-                totalWeight += variationConfig.Weight;
+                totalWeight += variationConfig.Distribution > 0
+                ? variationConfig.Distribution
+                : variationConfig.Weight;
+
                 variationThresholds.Add((totalWeight, variationConfig.ID));
             }
 
             VariationConfig allocatedVariation = null;
-            foreach ((uint weight, long id) in variationThresholds)
+            foreach ((double weight, long id) in variationThresholds)
             {
-                uint threshold = weight;
+                double threshold = weight;
                 long variationID = id;
                 if (allocation <= threshold)
                 {

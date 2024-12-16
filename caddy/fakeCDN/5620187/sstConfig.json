@@ -6,9 +6,9 @@
       "id": 1002,
       "name": "discounts",
       "variations": [
-        { "id": 10021, "name": "Original", "weight": 25, "state": "active" },
-        { "id": 10022, "name": "large", "weight": 25, "state": "active" },
-        { "id": 10023, "name": "small", "weight": 25, "state": "active" }
+        { "id": 10021, "name": "Original", "weight": 33, "distribution": 33.33, "state": "active" },
+        { "id": 10022, "name": "large", "weight": 33, "distribution": 33.33, "state": "active" },
+        { "id": 10023, "name": "small", "weight": 33, "distribution": 33.33, "state": "active" }
       ],
       "state": "active"
     }

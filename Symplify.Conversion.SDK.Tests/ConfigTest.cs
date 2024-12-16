@@ -16,17 +16,20 @@ namespace Symplify.Conversion.SDK.Tests
                     {
                         ""id"": 42,
                         ""name"": ""original"",
-                        ""weight"": 10
+                        ""weight"": 10,
+                        ""distribution"": 10
                     },
                     {
                         ""id"": 1337,
                         ""name"": ""huge"",
-                        ""weight"": 2
+                        ""weight"": 2,
+                        ""distribution"": 2
                     },
                     {
                         ""id"": 9999,
                         ""name"": ""small"",
-                        ""weight"": 1
+                        ""weight"": 1,
+                        ""distribution"": 1
                     }
                 ]
             }
@@ -42,17 +45,20 @@ namespace Symplify.Conversion.SDK.Tests
                     {
                         ""id"": 42,
                         ""name"": ""original"",
-                        ""weight"": 10.99
+                        ""weight"": 10.99,
+                        ""distribution"": 10.99
                     },
                     {
                         ""id"": 1337,
                         ""name"": ""huge"",
-                        ""weight"": 2.9
+                        ""weight"": 2.9,
+                        ""distribution"": 2.9
                     },
                     {
                         ""id"": 9999,
                         ""name"": ""small"",
-                        ""weight"": 1.9
+                        ""weight"": 1.9,
+                        ""distribution"": 1.9
                     }
                 ]
             }
@@ -69,17 +75,20 @@ namespace Symplify.Conversion.SDK.Tests
                     {
                         ""id"": 42,
                         ""name"": ""original"",
-                        ""weight"": 10
+                        ""weight"": 10,
+                        ""distribution"": 10
                     },
                     {
                         ""id"": 1337,
                         ""name"": ""huge"",
-                        ""weight"": 2
+                        ""weight"": 2,
+                        ""distribution"": 2
                     },
                     {
                         ""id"": 9999,
                         ""name"": ""small"",
-                        ""weight"": 1
+                        ""weight"": 1,
+                        ""distribution"": 1
                     }
                 ]
             }
@@ -94,17 +103,20 @@ namespace Symplify.Conversion.SDK.Tests
                 {
                     ""id"": 42,
                     ""name"": ""original"",
-                    ""weight"": 10
+                    ""weight"": 10,
+                    ""distribution"": 10
                 },
                 {
                     ""id"": 1337,
                     ""name"": ""huge"",
-                    ""weight"": 2
+                    ""weight"": 2,
+                    ""distribution"": 2
                 },
                 {
                     ""id"": 9999,
                     ""name"": ""small"",
-                    ""weight"": 1
+                    ""weight"": 1,
+                    ""distribution"": 1
                 }
             ]
             }
@@ -119,17 +131,20 @@ namespace Symplify.Conversion.SDK.Tests
                 {
             ""id"": 42,
                     ""name"": ""original"",
-                    ""weight"": 10
+                    ""weight"": 10,
+                    ""distribution"": 10
                 },
                 {
             ""id"": 1337,
                     ""name"": ""huge"",
-                    ""weight"": 2
+                    ""weight"": 2,
+                    ""distribution"": 2
                 },
                 {
             ""id"": 9999,
                     ""name"": ""small"",
-                    ""weight"": 1
+                    ""weight"": 1,
+                    ""distribution"": 1
                 }
             ]
             }
@@ -145,12 +160,14 @@ namespace Symplify.Conversion.SDK.Tests
                     {
                         ""id"": 42,
                         ""name"": ""original"",
-                        ""weight"": 10
+                        ""weight"": 10,
+                        ""distribution"": 10
                     },
                     {
                         ""id"": 1337,
                         ""name"": ""huge"",
-                        ""weight"": 2
+                        ""weight"": 2,
+                        ""distribution"": 2
                     },
                     {
                         ""id"": 9999,
@@ -168,8 +185,8 @@ namespace Symplify.Conversion.SDK.Tests
                 ""id"": 4711,
                 ""name"": ""discount"",
                 ""variations"": [
-                    { ""id"": 42, ""name"": ""original"", ""weight"": 10 },
-                    { ""id"": 1337, ""name"": ""huge"", ""weight"": 2 }
+                    { ""id"": 42, ""name"": ""original"", ""weight"": 10, ""distribution"": 10 },
+                    { ""id"": 1337, ""name"": ""huge"", ""weight"": 2, ""distribution"": 2 }
                 ]
             }
         ]}";
@@ -189,16 +206,19 @@ namespace Symplify.Conversion.SDK.Tests
             Assert.Equal(42, variationOriginal.ID);
             Assert.Equal("original", variationOriginal.Name);
             Assert.Equal((uint)10, variationOriginal.Weight);
+            Assert.Equal((double)10, variationOriginal.Distribution);
 
             VariationConfig variationHuge = project.Variations[1];
             Assert.Equal(1337, variationHuge.ID);
             Assert.Equal("huge", variationHuge.Name);
             Assert.Equal((uint)2, variationHuge.Weight);
+            Assert.Equal((double)2, variationHuge.Distribution);
 
             VariationConfig variationSmall = project.Variations[2];
             Assert.Equal(9999, variationSmall.ID);
             Assert.Equal("small", variationSmall.Name);
             Assert.Equal((uint)1, variationSmall.Weight);
+            Assert.Equal((double)1, variationSmall.Distribution);
         }
 
         [Fact]
