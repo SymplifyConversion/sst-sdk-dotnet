@@ -32,7 +32,7 @@ namespace Symplify.Conversion.SDK.Allocation.Config
         /// </summary>
         public override ProjectState Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            if (reader.GetString().ToLower(CultureInfo.InvariantCulture) == "active")
+            if (string.Equals(CultureInfo.InvariantCulture, "active"))
             {
                 return ProjectState.Active;
             }

@@ -167,7 +167,6 @@ namespace Symplify.Conversion.SDK
                     return project.FindVariationWithId(variationID)?.Name;
                 case ProjectAllocationStatus.NotAllocated:
                     return null;
-                case ProjectAllocationStatus.Unknown:
                 default:
                     // if we don't have any persisted allocation status, that
                     // means we continue below to get one!

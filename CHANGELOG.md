@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0] - 2024-12-16
+
+### Changed
+- Support for distribution value to get better precision on allocations
+- Added tests for distribution
+- Updated test configs
+
 ## [0.5.3] - 2023-06-09
 
 ### Changed
@@ -45,7 +52,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - A first version of the SDK for .NET
 
-[Unreleased]: https://github.com/SymplifyConversion/sst-sdk-dotnet/compare/v0.5.3...HEAD
+[Unreleased]: https://github.com/SymplifyConversion/sst-sdk-dotnet/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/SymplifyConversion/sst-sdk-dotnet/releases/tag/v1.0.0
 [0.5.3]: https://github.com/SymplifyConversion/sst-sdk-dotnet/releases/tag/v0.5.3
 [0.5.2]: https://github.com/SymplifyConversion/sst-sdk-dotnet/releases/tag/v0.5.2
 [0.5.1]: https://github.com/SymplifyConversion/sst-sdk-dotnet/releases/tag/v0.5.1

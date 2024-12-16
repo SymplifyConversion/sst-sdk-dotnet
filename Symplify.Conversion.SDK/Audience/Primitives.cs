@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Text.RegularExpressions;
 
 using Newtonsoft.Json.Linq;
@@ -98,9 +97,7 @@ namespace Symplify.Conversion.SDK.Audience
                     return StringFun(args[0], args[1], equals);
 
                 case "contains":
-#pragma warning disable CA1310
-                    Func<string, string, dynamic> contains = (a, b) => { return a.IndexOf(b) != -1; };
-#pragma warning disable CA1310
+                    Func<string, string, dynamic> contains = (a, b) => { return a.Contains(b); };
                     return StringFun(args[0], args[1], contains);
 
                 case "matches":
