@@ -20,7 +20,7 @@ jobs:
     - name: Setup Mono (for running)
       run: |
         sudo apt-get update
-        sudo apt-get -y install mono-devel nuget
+        sudo apt-get -y install mono-devel
     - name: Restore dependencies
       run: dotnet restore
     - name: Lint
