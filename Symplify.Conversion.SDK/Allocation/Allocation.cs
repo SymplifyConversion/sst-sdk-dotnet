@@ -20,7 +20,7 @@ namespace Symplify.Conversion.SDK.Allocation
                 return null;
             }
 
-            uint allocation = GetAllocation(project, visitorId);
+            double allocation = GetAllocation(project, visitorId);
 
             var variation = LookupVariationAt(project, allocation);
 
@@ -32,7 +32,7 @@ namespace Symplify.Conversion.SDK.Allocation
             return variation;
         }
 
-        private static uint GetAllocation(ProjectConfig project, string visitorId)
+        private static double GetAllocation(ProjectConfig project, string visitorId)
         {
             string hashKey = string.Format(CultureInfo.InvariantCulture, "{0}:{1}", visitorId, project.ID);
             uint totalWeight = 100;
@@ -40,7 +40,7 @@ namespace Symplify.Conversion.SDK.Allocation
             return CustomHash.HashInWindow(hashKey, totalWeight);
         }
 
-        private static VariationConfig LookupVariationAt(ProjectConfig project, uint allocation)
+        private static VariationConfig LookupVariationAt(ProjectConfig project, double allocation)
         {
             double totalWeight = 0;
             List<(double weight, long id)> variationThresholds = new List<(double weight, long id)>();
