@@ -11,7 +11,7 @@ namespace Symplify.Conversion.SDK
         /// <summary>
         /// Hash the given string key and scale the hash result to fit within the given window.
         /// </summary>
-        public static UInt32 HashInWindow(string key, uint window)
+        public static double HashInWindow(string key, uint window)
         {
             UInt32 unsignedMax = 4_294_967_295;
 
@@ -22,7 +22,7 @@ namespace Symplify.Conversion.SDK
             hash /= unsignedMax;
             hash *= window;
 
-            return (UInt32)Math.Ceiling(hash);
+            return hash;
         }
 
         /// <summary>
